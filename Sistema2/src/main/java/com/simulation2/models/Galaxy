@@ -1,0 +1,26 @@
+public class Galaxy {
+    private String name;
+    private int numberOfStars;
+    private 
+
+    public Galaxy(String name, int numberOfStars) {
+        this.name = name;
+        this.numberOfStars = numberOfStars;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getNumberOfStars() {
+        return numberOfStars;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setNumberOfStars(int numberOfStars) {
+        this.numberOfStars = numberOfStars;
+    }
+} 
