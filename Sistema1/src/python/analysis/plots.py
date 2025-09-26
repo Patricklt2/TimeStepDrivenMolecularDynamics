@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 
-def plot_trajectories(analytical_data, sim_data_dict, output_filename="trajectory_comparison.png"):
+def plot_trajectories(analytical_data, sim_data_dict, output_filename="data/results/trajectory_comparison.png"):
     plt.figure(figsize=(12, 8))
     
     plt.plot(analytical_data['Time'], analytical_data['Position'], 'k--', label='Solución Analítica', linewidth=2)
@@ -14,7 +14,7 @@ def plot_trajectories(analytical_data, sim_data_dict, output_filename="trajector
     plt.grid(True)
     plt.savefig(output_filename)
 
-def plot_error_vs_dt(error_data, output_filename="error_vs_dt.png"):
+def plot_error_vs_dt(error_data, output_filename="data/results/error_vs_dt.png"):
     plt.figure(figsize=(12, 8))
     
     for name, data in error_data.items():
