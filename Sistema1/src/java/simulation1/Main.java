@@ -1,6 +1,8 @@
 package simulation1;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 import simulation1.integrators.*;
 import simulation1.utils.CSVWriter;
 
@@ -8,33 +10,58 @@ public class Main {
     private static final double K = 10000;
     private static final double GAMMA = 100;
     private static final double MASS = 70;
+    private static final double TOTAL_TIME = 5.0;
 
-    private static final double INITIAL_POSITION = 1.0;
-    private static final double INITIAL_AMPLITUDE = 1.0;
-    private static final double INITIAL_VELOCITY = -INITIAL_AMPLITUDE * GAMMA / (2 * MASS);
-
-    private static final double TOTAL_TIME = 6.0;
-    private static final double DT = 0.00001;
+    private static final List<Double> DT_VALUES = List.of(1e-2,
+            1e-3, 1e-4, 1e-5, 1e-6, 1e-7
+    );
 
     public static void main(String[] args) {
-        Particle particle = new Particle(INITIAL_POSITION, INITIAL_VELOCITY, MASS);
+        String[] algorithms = {"Verlet", "Beeman", "Gear"};
 
-        IIntegrator integrator = new Verlet(K, GAMMA);
-        // IIntegrator integrator = new Beeman(K, GAMMA);
-        // IIntegrator integrator = new Gear(particle, K, GAMMA);
+        for (String algorithmName : algorithms) {
+            for (double dt : DT_VALUES) {
+                runSimulation(algorithmName, dt);
+            }
+        }
+    }
 
-        String outputFilename = "./data/raw/" + integrator.getClass().getSimpleName().toLowerCase() + "_sim.csv";
+    /**
+     * Realiza una simulación completa.
+     * @param algorithmName El nombre del integrador.
+     * @param dt El paso temporal para esta simulación.
+     */
+    private static void runSimulation(String algorithmName, double dt) {
+        String filename = String.format(Locale.US, "./data/raw/%s_sim_%.0e.csv",
+                algorithmName.toLowerCase(), dt).replace("e-0", "e-");
 
-        try (CSVWriter writer = new CSVWriter(outputFilename)) {
+        double initialPosition = 1.0;
+        double initialAmplitude = 1.0;
+        double initialVelocity = -initialAmplitude * GAMMA / (2 * MASS);
+        Particle particle = new Particle(initialPosition, initialVelocity, MASS);
+
+        IIntegrator integrator;
+        switch (algorithmName) {
+            case "Beeman":
+                integrator = new Beeman(K, GAMMA);
+                break;
+            case "Gear":
+                integrator = new Gear(particle, K, GAMMA);
+                break;
+            case "Verlet":
+            default:
+                integrator = new Verlet(K, GAMMA);
+                break;
+        }
+
+        try (CSVWriter writer = new CSVWriter(filename)) {
             writer.writeData(0, particle);
-
-            for (double t = DT; t <= TOTAL_TIME; t += DT) {
-                integrator.step(particle, DT);
+            for (double t = dt; t <= TOTAL_TIME; t += dt) {
+                integrator.step(particle, dt);
                 writer.writeData(t, particle);
             }
         } catch (IOException e) {
-            System.err.println("Error al escribir en el archivo de salida: " + e.getMessage());
-            e.printStackTrace();
+            System.err.println("Error al escribir el archivo " + filename + ": " + e.getMessage());
         }
     }
 }
