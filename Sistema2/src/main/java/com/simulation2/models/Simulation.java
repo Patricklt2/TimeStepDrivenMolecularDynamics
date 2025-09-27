@@ -1,9 +1,10 @@
 package com.simulation2.models;
 
 import java.util.List;
-import java.util.logging.Logger;
 
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Simulation {
 
@@ -36,7 +37,8 @@ public class Simulation {
     
     public void run(){
         // run simulation
-        logger.info("Starting simulation with {} galaxies and {} particles.", galaxies.length, N);
+        logger.info("Starting simulation...");
+        logger.debug("Total particles: " + N);
         
         writeToFile(galaxies); // initial state
 
@@ -45,7 +47,7 @@ public class Simulation {
             for (Galaxy galaxy : galaxies) {
                 galaxy.resetForces();
                 
-                galaxy.calculateForces();
+                galaxy.calculateForces(G, h);
 
                 galaxy.updateStarPositions(timeStep);
                 
@@ -55,6 +57,8 @@ public class Simulation {
         }
         logger.info("Simulation finished.");
         writeToFile(galaxies); // final state
+    }
+    private void writeToFile(Galaxy[] galaxies) {
     }
 
     private List<Particle> updateStarPositions(List<Particle> stars) {

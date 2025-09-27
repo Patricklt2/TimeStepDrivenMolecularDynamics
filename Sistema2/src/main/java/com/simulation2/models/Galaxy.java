@@ -79,8 +79,6 @@ public class Galaxy {
         int maxAttempts = 1000; // máximo número de intentos por partícula
         
         for (int i = 0; i < numberOfStars; i++) {
-            // Masa unitaria según el enunciado
-            double mass = 1.0;
             
             Vector3D position;
             boolean validPosition = false;
@@ -130,8 +128,7 @@ public class Galaxy {
             stars[i] = new Particle(
                 i,
                 position,
-                velocity,
-                mass
+                velocity
             );
         }
     }
@@ -193,12 +190,13 @@ public class Galaxy {
      * Aquí G = 1, m1 = m2 = 1 según el enunciado
      * Incluye un parámetro de suavizado para evitar singularidades
      */
-    private void calculateForces(){
+    public void calculateForces(double G, double h) {
         for (int i = 0; i < stars.length; i++) {
             for (int j = i + 1; j < stars.length; j++) {
                 Vector3D force = calculateForce(
                         stars[i].getPosition(), stars[i].getMass(),
-                        stars[j].getPosition(), stars[j].getMass());
+                        stars[j].getPosition(), stars[j].getMass(),
+                        G, h);
                 stars[i].addForce(force);
                 stars[j].addForce(force.negate());
             }
@@ -209,7 +207,10 @@ public class Galaxy {
     // revisar que esté bien
     public Vector3D calculateForce(
             Vector3D pos1, double m1, 
-            Vector3D pos2, double m2) {
+            Vector3D pos2, double m2,
+            double G,
+            double h
+            ) {
         
         Vector3D r = pos2.subtract(pos1);
         double r2 = r.getNormSq() + h * h;
@@ -222,7 +223,8 @@ public class Galaxy {
 
     /**
      * Actualiza las posiciones y velocidades de todas las estrellas
-     * Usando el método de Euler explícito
+     * Esto se tiene que modificar aca para que use nuestros metodos integradores
+     * En vez del esquema de Euler simple que estaba antes
      */
 
     public void updateStarPositions(double timeStep) {

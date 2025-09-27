@@ -23,7 +23,7 @@
     <logger name="org.apache.commons.math3" level="WARN"/>
     
     <!-- Nivel de log por defecto -->
-    <root level="INFO">
+    <root level="DEBUG">
         <appender-ref ref="CONSOLE"/>
         <appender-ref ref="FILE"/>
     </root>

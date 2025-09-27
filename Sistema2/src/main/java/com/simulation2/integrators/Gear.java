@@ -1,6 +1,6 @@
-package simulation1.integrators;
+package com.simulation2.integrators;
 
-import simulation1.Particle;
+import com.simulation2.models.Particle;
 
 public class Gear implements IIntegrator {
     // cte del resorte
@@ -31,9 +31,6 @@ public class Gear implements IIntegrator {
         this.gamma = gamma;
         this.mass = p.getMass();
         this.derivatives = new double[6];
-
-        derivatives[0] = p.getPosition();
-        derivatives[1] = p.getVelocity();
 
         derivatives[2] = (-k * derivatives[0] - gamma * derivatives[1]) / mass;
         derivatives[3] = (-k * derivatives[1] - gamma * derivatives[2]) / mass;
@@ -74,8 +71,5 @@ public class Gear implements IIntegrator {
         double deltaR2 = deltaA * (dt * dt) / FACTORIALS[2];
 
         correct(predictedDerivatives, deltaR2, dt);
-
-        p.setPosition(this.derivatives[0]);
-        p.setVelocity(this.derivatives[1]);
     }
 }

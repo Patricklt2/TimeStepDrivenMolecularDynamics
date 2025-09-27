@@ -23,9 +23,8 @@ public class Particle {
     }
 
     // TODO: Posición aleatoria; ver de incluir los limites de rand de posicion
-    public Particle(int id, double mass) {
+    public Particle(int id) {
         this.id = id;
-        this.mass = mass;
         this.position = Vector3D.ZERO;
         this.velocity = Vector3D.ZERO;
         this.acceleration = Vector3D.ZERO;
