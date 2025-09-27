@@ -5,7 +5,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Galaxy {
-
     private static final Logger logger = LoggerFactory.getLogger(Galaxy.class);
     private final String name;
     private int numberOfStars;
@@ -259,5 +258,18 @@ public class Galaxy {
     public String toString() {
         return String.format("Galaxy{name='%s', numberOfStars=%d, centerPosition=%s}", 
                            name, numberOfStars, centerPosition);
+    }
+
+    public String toFileGalaxyHeader(){
+        return String.format("%s;%.5e;%.5e;%.5e", 
+                name, centerPosition.getX(), centerPosition.getY(), centerPosition.getZ());
+    }
+
+    public String[] toFileGalaxyStars(){
+        String[] starLines = new String[numberOfStars];
+        for (int i = 0; i < numberOfStars; i++) {
+            starLines[i] = stars[i].toFileString();
+        }
+        return starLines;
     }
 }

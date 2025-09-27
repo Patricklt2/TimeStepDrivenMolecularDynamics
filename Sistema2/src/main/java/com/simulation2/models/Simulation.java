@@ -6,6 +6,9 @@ import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.simulation2.utils.CSVWriter;
+import java.io.IOException;
+
 public class Simulation {
 
     private final double G = 1.0;
@@ -17,13 +20,13 @@ public class Simulation {
 
     private final Galaxy[] galaxies;
     private double totalTime = 0;
-
-
+    private final String filename;
     private static final Logger logger = LoggerFactory.getLogger(Simulation.class);
 
-    private Simulation(int n, int numGalaxies, double galaxyDistance, double maxTime) {
+    private Simulation(int n, int numGalaxies, double galaxyDistance, double maxTime, String filename) {
         this.N = n;
         this.galaxies = new Galaxy[numGalaxies];
+        this.filename = filename;
         this.maxTime = maxTime;
         initializeGalaxies(numGalaxies, galaxyDistance);
     }
@@ -61,16 +64,27 @@ public class Simulation {
         writeToFile(galaxies); // final state
     }
     private void writeToFile(Galaxy[] galaxies) {
+        logger.debug("Writing simulation state to file: " + filename);
+        CSVWriter writer = null;
+        try {
+            for (Galaxy galaxy : galaxies) {
+                writer = new CSVWriter(filename);
+                writer.writeData(totalTime, galaxy);
+                writer.close();
+            }
+        } catch (IOException e) {
+            logger.error("Error writing to file: " + e.getMessage());
+        } finally {
+            if (writer != null) {
+                try {
+                    writer.close();
+                } catch (IOException e) {
+                    logger.error("Error closing writer: " + e.getMessage());
+                }
+            }
+        }
     }
 
-    private List<Particle> updateStarPositions(List<Particle> stars) {
-        for (Particle star : stars) {
-            star.updateAcceleration();
-            star.setVelocity(star.getVelocity().add(star.getAcceleration().scalarMultiply(timeStep)));
-            star.setPosition(star.getPosition().add(star.getVelocity().scalarMultiply(timeStep)));
-        }
-        return stars;
-    }
 
 }
     
