@@ -11,11 +11,13 @@ public class Simulation {
     private final double G = 1.0;
     private final double h = 0.05;
     private final int N; // número de partículas
-    private final Galaxy[] galaxies;
+    private final double maxTime;
     private final double timeStep = 0.01;
     private final double printingStep = 1.0;
+
+    private final Galaxy[] galaxies;
     private double totalTime = 0;
-    private final double maxTime;
+
 
     private static final Logger logger = LoggerFactory.getLogger(Simulation.class);
 
