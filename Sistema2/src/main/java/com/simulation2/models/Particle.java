@@ -100,13 +100,16 @@ public class Particle {
                 velocity.getX(), velocity.getY(), velocity.getZ(),
                 mass);
     }
+    public static String fileHeader() {
+        return "id;x;y;z;vx;vy;vz;fx;fy;fz";
+    }
     
     // Método para guardar estado en archivo
     public String toFileString() {
-        return String.format("%d %.15e %.15e %.15e %.15e %.15e %.15e %.15e",
+        return String.format("%d;%.15e;%.15e;%.15e;%.15e;%.15e;%.15e;%.15e;%.15e;%.15e",
                 id,
                 position.getX(), position.getY(), position.getZ(),
                 velocity.getX(), velocity.getY(), velocity.getZ(),
-                mass);
+                force.getX(), force.getY(), force.getZ());
     }
 }
