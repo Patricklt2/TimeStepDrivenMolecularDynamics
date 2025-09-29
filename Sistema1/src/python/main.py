@@ -59,4 +59,3 @@ def analyze_error_vs_dt():
 
 if __name__ == '__main__':
     analyze_error_vs_dt()
-    
