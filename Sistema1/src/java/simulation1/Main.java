@@ -3,7 +3,11 @@ package simulation1;
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
-import simulation1.integrators.*;
+
+import simulation1.integrators.Beeman;
+import simulation1.integrators.Gear;
+import simulation1.integrators.IIntegrator;
+import simulation1.integrators.Verlet;
 import simulation1.utils.CSVWriter;
 
 public class Main {
@@ -12,7 +16,7 @@ public class Main {
     private static final double MASS = 70;
     private static final double TOTAL_TIME = 5.0;
 
-    private static final List<Double> DT_VALUES = List.of(1e-2,
+    private static final List<Double> DT_VALUES = List.of(1e-1, 1e-2,
             1e-3, 1e-4, 1e-5, 1e-6, 1e-7
     );
 

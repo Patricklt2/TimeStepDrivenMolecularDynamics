@@ -39,7 +39,7 @@ def analyze_single_run():
     plots.plot_trajectories(analytical_data, sim_data_dict)
 
 def analyze_error_vs_dt():
-    dts = [1e-2, 1e-3, 1e-4, 1e-5, 1e-6, 1e-7]
+    dts = [1e-1, 1e-2, 1e-3, 1e-4, 1e-5, 1e-6, 1e-7]
     algorithms = ['verlet', 'beeman', 'gear']
     error_data = {name: [] for name in algorithms}
 
@@ -58,5 +58,5 @@ def analyze_error_vs_dt():
 
 
 if __name__ == '__main__':
-    analyze_single_run()
+    analyze_error_vs_dt()
     

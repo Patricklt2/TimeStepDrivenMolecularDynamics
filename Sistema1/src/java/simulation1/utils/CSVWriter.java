@@ -3,8 +3,9 @@ package simulation1.utils;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import simulation1.Particle;
 import java.util.Locale;
+
+import simulation1.Particle;
 
 public class CSVWriter implements AutoCloseable {
     private final BufferedWriter writer;
@@ -19,7 +20,7 @@ public class CSVWriter implements AutoCloseable {
         double pos = p.getPosition();
         double vel = p.getVelocity();
 
-        writer.write(String.format(Locale.US, "%.5f;%.5f;%.5f\n", t, pos, vel));
+        writer.write(String.format(Locale.US, "%.15e;%.15e;%.15e\n", t, pos, vel));
     }
 
     @Override
