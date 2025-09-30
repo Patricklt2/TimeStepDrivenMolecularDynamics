@@ -1,6 +1,8 @@
 package com.simulation2.models;
 
 import java.util.List;
+
+import com.simulation2.integrators.IIntegrator;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,16 +19,18 @@ public class Simulation {
     private final double timeStep = 0.01;
     private final double printingStep = 1.0;
 
+    private final IIntegrator integrator;
     private final Galaxy[] galaxies;
     private double totalTime = 0;
     private final String filename;
     private static final Logger logger = LoggerFactory.getLogger(Simulation.class);
 
-    private Simulation(int n, int numGalaxies, double galaxyDistance, double maxTime, String filename) {
+    public Simulation(int n, int numGalaxies, double galaxyDistance, double maxTime, String filename, IIntegrator integrator) {
         this.N = n;
         this.galaxies = new Galaxy[numGalaxies];
         this.filename = filename;
         this.maxTime = maxTime;
+        this.integrator = integrator;
         initializeGalaxies(numGalaxies, galaxyDistance);
     }
 
@@ -49,8 +53,7 @@ public class Simulation {
         while (totalTime < maxTime) {
                 totalTime += timeStep; 
             for (Galaxy galaxy : galaxies) {
-                // cambiar metodo de integracion segun se quiera
-                galaxy.gearMethod(timeStep, G, h);
+                galaxy.integratorMethod(integrator,timeStep, G, h);
             }
             writeToFile(galaxies);
         }

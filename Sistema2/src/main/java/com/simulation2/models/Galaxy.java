@@ -264,6 +264,14 @@ public class Galaxy {
         return starLines;
     }
 
+    public void integratorMethod(IIntegrator integrator, double dt, double G, double h){
+        List<Particle> ls = Arrays.asList(this.stars);
+        calculateForces(G, h);
+        integrator.updatePositions(ls, dt);
+        calculateForces(G, h);
+        integrator.updateVelocities(ls, dt);
+    }
+
     public void gearMethod(double dt, double G, double h) {
         List<Particle> ls = Arrays.asList(this.stars);
         IIntegrator integrator = new Gear();
@@ -272,14 +280,14 @@ public class Galaxy {
         integrator.updateVelocities(ls, dt);
     }
 
-    public void beemanMethod(double dt, double k, double G, double h, double gamma) {
-        List<Particle> ls = Arrays.asList(this.stars);
-        IIntegrator integrator = new Beeman(k, gamma);
-        calculateForces(G, h);
-        integrator.updatePositions(ls, dt);
-        calculateForces(G, h);
-        integrator.updateVelocities(ls, dt);
-    }
+//    public void beemanMethod(double dt, double k, double G, double h, double gamma) {
+//        List<Particle> ls = Arrays.asList(this.stars);
+//        IIntegrator integrator = new Beeman(k, gamma);
+//        calculateForces(G, h);
+//        integrator.updatePositions(ls, dt);
+//        calculateForces(G, h);
+//        integrator.updateVelocities(ls, dt);
+//    }
 
     public void velocityVerletMethod(double dt, double G, double h) {
         List<Particle> ls = Arrays.asList(this.stars);
