@@ -1,6 +1,11 @@
 package com.simulation2.models;
+
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
+import com.simulation2.integrators.*;
+import java.lang.reflect.Array;
+import java.util.List;
 import java.util.Random;
+import java.util.Arrays;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -183,55 +188,41 @@ public class Galaxy {
         }
     }
 
-    /**
-     * Calcula las fuerzas gravitacionales entre todas las estrellas de la galaxia
-     * Usa la fórmula de Newton: F = G * (m1*m2) / r^2
-     * Aquí G = 1, m1 = m2 = 1 según el enunciado
-     * Incluye un parámetro de suavizado para evitar singularidades
-     */
-    public void calculateForces(double G, double h) {
+
+        public void calculateForces(double G, double h) {
+        // Mismo método para todos los integradores
+        for (Particle p : stars) {
+            p.resetForce();
+        }
+        
         for (int i = 0; i < stars.length; i++) {
             for (int j = i + 1; j < stars.length; j++) {
+                Particle pi = stars[i];
+                Particle pj = stars[j];
+
                 Vector3D force = calculateForce(
-                        stars[i].getPosition(), stars[i].getMass(),
-                        stars[j].getPosition(), stars[j].getMass(),
-                        G, h);
-                stars[i].addForce(force);
-                stars[j].addForce(force.negate());
+                    pi.getPosition(), pi.getMass(),
+                    pj.getPosition(), pj.getMass(),
+                    G, h
+                );
+                
+                pi.addForce(force);
+                pj.addForce(force.negate());
             }
         }
     }
-
-    // Cálculo de fuerza gravitacional
-    // revisar que esté bien
-    public Vector3D calculateForce(
+    
+    private Vector3D calculateForce(
             Vector3D pos1, double m1, 
             Vector3D pos2, double m2,
-            double G,
-            double h
-            ) {
+            double G, double h) {
         
         Vector3D r = pos2.subtract(pos1);
         double r2 = r.getNormSq() + h * h;
         double r_mag = Math.sqrt(r2);
-        
         double forceMag = G * m1 * m2 / (r2 * r_mag);
         
         return r.normalize().scalarMultiply(forceMag);
-    }
-
-    /**
-     * Actualiza las posiciones y velocidades de todas las estrellas
-     * Esto se tiene que modificar aca para que use nuestros metodos integradores
-     * En vez del esquema de Euler simple que estaba antes
-     */
-
-    public void updateStarPositions(double timeStep) {
-        for (Particle star : stars) {
-            star.updateAcceleration();
-            star.setVelocity(star.getVelocity().add(star.getAcceleration().scalarMultiply(timeStep)));
-            star.setPosition(star.getPosition().add(star.getVelocity().scalarMultiply(timeStep)));
-        }
     }
     
     /**
@@ -271,5 +262,41 @@ public class Galaxy {
             starLines[i] = stars[i].toFileString();
         }
         return starLines;
+    }
+
+    public void gearMethod(double dt, double G, double h) {
+        List<Particle> ls = Arrays.asList(this.stars);
+        IIntegrator integrator = new Gear();
+        integrator.updatePositions(ls, dt);
+        calculateForces(G, h);
+        integrator.updateVelocities(ls, dt);
+    }
+
+    public void beemanMethod(double dt, double k, double G, double h, double gamma) {
+        List<Particle> ls = Arrays.asList(this.stars);
+        IIntegrator integrator = new Beeman(k, gamma);
+        calculateForces(G, h);
+        integrator.updatePositions(ls, dt);
+        calculateForces(G, h);
+        integrator.updateVelocities(ls, dt);
+    }
+
+    public void velocityVerletMethod(double dt, double G, double h) {
+        List<Particle> ls = Arrays.asList(this.stars);
+        IIntegrator integrator = new VelocityVerlet();
+        calculateForces(G, h);
+        integrator.updatePositions(ls, dt);
+        calculateForces(G, h);
+        integrator.updateVelocities(ls, dt);
+    }
+
+    public void verletMethod(double dt, double G, double h) {
+        List<Particle> ls = Arrays.asList(this.stars);
+        IIntegrator integrator = new Verlet(ls, dt);
+        calculateForces(G, h);
+        integrator.updatePositions(ls, dt);
+        calculateForces(G, h);
+        integrator.updateVelocities(ls, dt);
+
     }
 }

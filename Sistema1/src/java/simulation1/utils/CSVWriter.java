@@ -20,7 +20,7 @@ public class CSVWriter implements AutoCloseable {
         double pos = p.getPosition();
         double vel = p.getVelocity();
 
-        writer.write(String.format(Locale.US, "%.15e;%.15e;%.15e\n", t, pos, vel));
+        writer.write(String.format(Locale.US, "%.17e;%.17e;%.17e\n", t, pos, vel));
     }
 
     @Override
