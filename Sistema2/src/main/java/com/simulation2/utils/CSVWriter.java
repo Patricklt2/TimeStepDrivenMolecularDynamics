@@ -3,8 +3,6 @@ package com.simulation2.utils;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import com.simulation2.models.Particle;
-import java.util.Locale;
 import com.simulation2.models.Galaxy;
 
 public class CSVWriter implements AutoCloseable {

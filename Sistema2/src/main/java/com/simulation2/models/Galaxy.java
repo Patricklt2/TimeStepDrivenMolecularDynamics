@@ -2,7 +2,6 @@ package com.simulation2.models;
 
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 import com.simulation2.integrators.*;
-import java.lang.reflect.Array;
 import java.util.List;
 import java.util.Random;
 import java.util.Arrays;
@@ -220,7 +219,7 @@ public class Galaxy {
         Vector3D r = pos2.subtract(pos1);
         double r2 = r.getNormSq() + h * h;
         double r_mag = Math.sqrt(r2);
-        double forceMag = G * m1 * m2 / (r2 * r_mag);
+        double forceMag = - G * m1 * m2 / (r2 * r_mag);
         
         return r.normalize().scalarMultiply(forceMag);
     }
@@ -270,41 +269,5 @@ public class Galaxy {
         integrator.updatePositions(ls, dt);
         calculateForces(G, h);
         integrator.updateVelocities(ls, dt);
-    }
-
-    public void gearMethod(double dt, double G, double h) {
-        List<Particle> ls = Arrays.asList(this.stars);
-        IIntegrator integrator = new Gear();
-        integrator.updatePositions(ls, dt);
-        calculateForces(G, h);
-        integrator.updateVelocities(ls, dt);
-    }
-
-//    public void beemanMethod(double dt, double k, double G, double h, double gamma) {
-//        List<Particle> ls = Arrays.asList(this.stars);
-//        IIntegrator integrator = new Beeman(k, gamma);
-//        calculateForces(G, h);
-//        integrator.updatePositions(ls, dt);
-//        calculateForces(G, h);
-//        integrator.updateVelocities(ls, dt);
-//    }
-
-    public void velocityVerletMethod(double dt, double G, double h) {
-        List<Particle> ls = Arrays.asList(this.stars);
-        IIntegrator integrator = new VelocityVerlet();
-        calculateForces(G, h);
-        integrator.updatePositions(ls, dt);
-        calculateForces(G, h);
-        integrator.updateVelocities(ls, dt);
-    }
-
-    public void verletMethod(double dt, double G, double h) {
-        List<Particle> ls = Arrays.asList(this.stars);
-        IIntegrator integrator = new Verlet(ls, dt);
-        calculateForces(G, h);
-        integrator.updatePositions(ls, dt);
-        calculateForces(G, h);
-        integrator.updateVelocities(ls, dt);
-
     }
 }

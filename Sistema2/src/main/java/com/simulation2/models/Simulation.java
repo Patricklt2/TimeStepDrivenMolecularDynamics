@@ -1,7 +1,5 @@
 package com.simulation2.models;
 
-import java.util.List;
-
 import com.simulation2.integrators.IIntegrator;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 import org.slf4j.Logger;
