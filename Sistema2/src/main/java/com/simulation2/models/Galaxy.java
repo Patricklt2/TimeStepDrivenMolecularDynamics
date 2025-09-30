@@ -1,6 +1,7 @@
 package com.simulation2.models;
-import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 import java.util.Random;
+
+import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,6 +22,12 @@ public class Galaxy {
         initializeStars();
     }
     
+        
+    public Galaxy(String name, Particle[] ps) {
+        this.name = name;
+        this.stars = ps;
+    }
+
     public String getName() {
         return name;
     }
@@ -84,9 +91,9 @@ public class Galaxy {
             int attempts = 0;
             
             do {
-                double positionX = centerPosition.getX() + random.nextGaussian(); // desvío = 1
-                double positionY = centerPosition.getY() + random.nextGaussian();
-                double positionZ = centerPosition.getZ() + random.nextGaussian();
+                double positionX = centerPosition.getX() + random.nextGaussian() * 4.0; // desvío = 1
+                double positionY = centerPosition.getY() + random.nextGaussian() * 4.0;
+                double positionZ = centerPosition.getZ() + random.nextGaussian() * 4.0;
                 
                 position = new Vector3D(positionX, positionY, positionZ);
                 
@@ -127,7 +134,8 @@ public class Galaxy {
             stars[i] = new Particle(
                 i,
                 position,
-                velocity
+                velocity,
+                name
             );
         }
     }
@@ -192,32 +200,19 @@ public class Galaxy {
     public void calculateForces(double G, double h) {
         for (int i = 0; i < stars.length; i++) {
             for (int j = i + 1; j < stars.length; j++) {
-                Vector3D force = calculateForce(
-                        stars[i].getPosition(), stars[i].getMass(),
-                        stars[j].getPosition(), stars[j].getMass(),
-                        G, h);
-                stars[i].addForce(force);
-                stars[j].addForce(force.negate());
+
             }
         }
     }
 
     // Cálculo de fuerza gravitacional
-    // revisar que esté bien
-    public Vector3D calculateForce(
-            Vector3D pos1, double m1, 
-            Vector3D pos2, double m2,
-            double G,
-            double h
-            ) {
-        
-        Vector3D r = pos2.subtract(pos1);
-        double r2 = r.getNormSq() + h * h;
-        double r_mag = Math.sqrt(r2);
-        
-        double forceMag = G * m1 * m2 / (r2 * r_mag);
-        
-        return r.normalize().scalarMultiply(forceMag);
+    public static Vector3D calculateForce(Particle p1, Particle p2, double G, double h) {
+        Vector3D r_ij = p2.getPosition().subtract(p1.getPosition());
+
+        double denominator = Math.pow(r_ij.getNormSq() + h * h, 1.5);
+        double scalar = -G * p1.getMass() * p2.getMass() / denominator;
+
+        return r_ij.scalarMultiply(scalar);
     }
 
     /**

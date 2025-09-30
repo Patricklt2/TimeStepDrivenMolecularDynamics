@@ -8,9 +8,9 @@ public class Particle {
     private Vector3D force;
     private final double mass = 1.0; // masa unitaria
     private final int id;
+    private final String galaxyName;
 
-
-    public Particle(int id, Vector3D initialPosition, Vector3D initialVelocity) {
+    public Particle(int id, Vector3D initialPosition, Vector3D initialVelocity, String galaxyName) {
         this.id = id;
         this.position = new Vector3D(initialPosition.getX(), 
                                      initialPosition.getY(), 
@@ -20,15 +20,17 @@ public class Particle {
                                      initialVelocity.getZ());
         this.acceleration = Vector3D.ZERO;
         this.force = Vector3D.ZERO;
+        this.galaxyName = galaxyName;
     }
 
     // TODO: Posición aleatoria; ver de incluir los limites de rand de posicion
-    public Particle(int id) {
+    public Particle(int id, String galaxyName) {
         this.id = id;
         this.position = Vector3D.ZERO;
         this.velocity = Vector3D.ZERO;
         this.acceleration = Vector3D.ZERO;
         this.force = Vector3D.ZERO;
+        this.galaxyName = galaxyName;
     }
     
     // Métodos para la simulación
@@ -79,6 +81,10 @@ public class Particle {
         return id;
     }
     
+    public String getGalaxyName(){
+        return galaxyName;
+    }
+
     // Setters (usar con cuidado)
     public void setPosition(Vector3D position) {
         this.position = new Vector3D(position.getX(), position.getY(), position.getZ());
