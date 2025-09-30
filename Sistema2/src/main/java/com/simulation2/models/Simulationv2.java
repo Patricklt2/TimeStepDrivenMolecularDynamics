@@ -18,13 +18,7 @@ import org.slf4j.LoggerFactory;
 import com.simulation2.integrators.IIntegrator;
 import com.simulation2.integrators.VelocityVerlet;
 
-/**
- * The main engine for the N-body gravitational simulation.
- * This class orchestrates the initialization of galaxies, the main simulation loop,
- * force calculations, and writing output data.
- */
 public class Simulationv2 {
-
     // --- Physical and Simulation Parameters ---
     private final double G = 1.0;
     private final double h = 0.05; // Gravitational smoothing parameter

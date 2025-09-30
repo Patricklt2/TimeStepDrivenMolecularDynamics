@@ -91,9 +91,9 @@ public class Galaxy {
             int attempts = 0;
             
             do {
-                double positionX = centerPosition.getX() + random.nextGaussian() * 4.0; // desvío = 1
-                double positionY = centerPosition.getY() + random.nextGaussian() * 4.0;
-                double positionZ = centerPosition.getZ() + random.nextGaussian() * 4.0;
+                double positionX = centerPosition.getX() + random.nextGaussian(); // desvío = 1
+                double positionY = centerPosition.getY() + random.nextGaussian();
+                double positionZ = centerPosition.getZ() + random.nextGaussian();
                 
                 position = new Vector3D(positionX, positionY, positionZ);
                 
