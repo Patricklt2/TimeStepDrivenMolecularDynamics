@@ -10,7 +10,7 @@ public class Main {
         System.out.println("Hello, World!");
         IIntegrator integrator = new VelocityVerlet();
 
-        Simulation s = new Simulation(100, 1, 100, 5, "sim.csv", integrator);
+        Simulation s = new Simulation(100, 1, 100, 5, "python/data/sim.csv", integrator);
         s.run();
     }
 }
