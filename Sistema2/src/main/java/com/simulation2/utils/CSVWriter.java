@@ -10,7 +10,7 @@ import com.simulation2.models.Galaxy;
 public class CSVWriter implements AutoCloseable {
     private final BufferedWriter writer;
     public CSVWriter(String filename) throws IOException {
-        this.writer = new BufferedWriter(new FileWriter(filename));
+        this.writer = new BufferedWriter(new FileWriter(filename, true));
         
     }
 
