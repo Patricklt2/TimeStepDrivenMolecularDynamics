@@ -1,7 +1,6 @@
 package com.simulation2.models;
 
 import java.util.List;
-
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,19 +49,15 @@ public class Simulation {
         while (totalTime < maxTime) {
                 totalTime += timeStep; 
             for (Galaxy galaxy : galaxies) {
-                galaxy.resetForces();
-                
-                galaxy.calculateForces(G, h);
-
-                galaxy.updateStarPositions(timeStep);
-                
-                galaxy.calculateNewCenterPosition();
+                // cambiar metodo de integracion segun se quiera
+                galaxy.gearMethod(timeStep, G, h);
             }
             writeToFile(galaxies);
         }
         logger.info("Simulation finished.");
         writeToFile(galaxies); // final state
     }
+
     private void writeToFile(Galaxy[] galaxies) {
         logger.debug("Writing simulation state to file: " + filename);
         CSVWriter writer = null;
