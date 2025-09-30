@@ -6,11 +6,8 @@ import com.simulation2.models.Simulation;
 
 public class Main {
     public static void main(String[] args) {
-
-        System.out.println("Hello, World!");
         IIntegrator integrator = new VelocityVerlet();
-
-        Simulation s = new Simulation(100, 1, 100, 5, "sim.csv", integrator);
+        Simulation s = new Simulation(100, 1, 0, 5, "sim.csv", integrator);
         s.run();
     }
 }
