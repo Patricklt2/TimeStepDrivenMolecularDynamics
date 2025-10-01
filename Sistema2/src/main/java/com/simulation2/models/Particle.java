@@ -5,6 +5,9 @@ public class Particle {
     private Vector3D position;
     private Vector3D velocity;
     private Vector3D acceleration;
+    private Vector3D oldPosition;
+    private Vector3D oldVelocity;
+    private Vector3D oldAcceleration;
     private Vector3D force;
     private final double mass = 1.0; // masa unitaria
     private final int id;
@@ -66,6 +69,18 @@ public class Particle {
     public Vector3D getAcceleration() {
         return acceleration;
     }
+
+    public Vector3D getOldPosition() {
+        return oldPosition;
+    }
+
+    public Vector3D getOldVelocity() {
+        return oldVelocity;
+    }
+
+    public Vector3D getOldAcceleration() {
+        return oldAcceleration;
+    }
     
     public Vector3D getForce() {
         return force;
@@ -90,6 +105,18 @@ public class Particle {
     
     public void setAcceleration(Vector3D acceleration) {
         this.acceleration = new Vector3D(acceleration.getX(), acceleration.getY(), acceleration.getZ());
+    }
+
+    public void setOldPosition(Vector3D oldPosition) {
+        this.oldPosition = new Vector3D(oldPosition.getX(), oldPosition.getY(), oldPosition.getZ());
+    }
+
+    public void setOldVelocity(Vector3D oldVelocity) {
+        this.oldVelocity = new Vector3D(oldVelocity.getX(), oldVelocity.getY(), oldVelocity.getZ());
+    }
+
+    public void setOldAcceleration(Vector3D oldAcceleration) {
+        this.oldAcceleration = new Vector3D(oldAcceleration.getX(), oldAcceleration.getY(), oldAcceleration.getZ());
     }
 
     @Override
