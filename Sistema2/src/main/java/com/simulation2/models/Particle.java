@@ -59,7 +59,7 @@ public class Particle {
     public Vector3D calculateForceFrom(Particle other, double G, double h){
 
         Vector3D r12 = other.getPosition().subtract(position);
-        double r12_soft = Math.pow(r12.getNormSq(),2) + Math.pow(h, 2);
+        double r12_soft = r12.getNormSq() + Math.pow(h, 2);
         double denominator = Math.pow(r12_soft, 1.5);
         double forceMag = - G * mass * other.getMass() / denominator;
 
