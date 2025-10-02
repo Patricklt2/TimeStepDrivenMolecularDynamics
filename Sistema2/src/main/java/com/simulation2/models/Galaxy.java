@@ -135,6 +135,19 @@ public class Galaxy {
             );
         }
     }
+
+    public void initializeAccelerations(double G, double h) {
+        // Calcular fuerzas iniciales
+        calculateForces(G, h);
+        
+        // Calcular y asignar aceleraciones iniciales
+        for (Particle p : stars) {
+            Vector3D initialAcceleration = p.getForce().scalarMultiply(1.0 / p.getMass());
+            p.setAcceleration(initialAcceleration);
+            p.setOldAcceleration(initialAcceleration); // Importante para Beeman
+        }
+    }
+
     
     /**
      * Genera una posición aleatoria dentro de una esfera
@@ -205,8 +218,8 @@ public class Galaxy {
                     G, h
                 );
                 
-                pi.addForce(force.negate());
-                pj.addForce(force);
+                pi.addForce(force);
+                pj.addForce(force.negate());
             }
         }
     }
@@ -233,8 +246,9 @@ public class Galaxy {
             double G, double h) {
         
         Vector3D r = pos2.subtract(pos1);
-        double r_soft = r.getNormSq() + h * h;
-        double denominator = Math.pow(r_soft, 1.5);
+        double r_norm = r.getNorm();
+        double r_soft = Math.sqrt(r_norm * r_norm + h * h);
+        double denominator = r_soft * r_soft * r_soft;
         double forceMag = - G * m1 * m2 / denominator;
         
         return r.scalarMultiply(forceMag);
@@ -281,7 +295,6 @@ public class Galaxy {
 
     public void integratorMethod(IIntegrator integrator, double dt, double G, double h){
         List<Particle> ls = Arrays.asList(this.stars);
-        calculateForces(G, h);
         integrator.updatePositions(ls, dt);
         calculateForces(G, h);
         integrator.updateVelocities(ls, dt);

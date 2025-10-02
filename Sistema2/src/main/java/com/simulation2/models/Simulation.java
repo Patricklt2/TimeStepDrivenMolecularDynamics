@@ -14,7 +14,7 @@ public class Simulation {
     private final double h = 0.05;
     private final int N; // número de partículas
     private final double maxTime;
-    private final double timeStep = 0.01;
+    private final double timeStep = 1e-04;
     private final double printingStep = 1.0;
 
     private final IIntegrator integrator;
@@ -38,6 +38,7 @@ public class Simulation {
             int starsPerGalaxy = N / numGalaxies;
             Vector3D centerPosition = new Vector3D(i * galaxyDistance, 0, 0);
             galaxies[i] = new Galaxy(name, starsPerGalaxy, centerPosition);
+            galaxies[i].initializeAccelerations(G, h);
         }
     }
     

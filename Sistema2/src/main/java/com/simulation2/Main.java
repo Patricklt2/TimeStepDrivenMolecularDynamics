@@ -13,8 +13,9 @@ public class Main {
 
         System.out.println("Hello, World!");
         IIntegrator integrator = new Beeman(K, GAMMA);
+        IIntegrator integrator2 = new VelocityVerlet();
 
-        Simulation s = new Simulation(2, 1, 100, 20, "sim.csv", integrator);
+        Simulation s = new Simulation(2, 1, 0, 20, "sim.csv", integrator);
         s.run();
     }
 }

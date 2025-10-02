@@ -1,0 +1,40 @@
+-------------------------------------------------------------------------------
+Test set: com.simulation2.integrators.VelocityVerletTest
+-------------------------------------------------------------------------------
+Tests run: 6, Failures: 3, Errors: 0, Skipped: 0, Time elapsed: 0.076 s <<< FAILURE! -- in com.simulation2.integrators.VelocityVerletTest
+com.simulation2.integrators.VelocityVerletTest.testEnergyConservationTwoBody -- Time elapsed: 0.031 s <<< FAILURE!
+org.opentest4j.AssertionFailedError: Error de energía demasiado grande: 2.02e+00% (tolerancia: 1.00e-06%) ==> expected: <true> but was: <false>
+	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+	at org.junit.jupiter.api.AssertTrue.failNotTrue(AssertTrue.java:63)
+	at org.junit.jupiter.api.AssertTrue.assertTrue(AssertTrue.java:36)
+	at org.junit.jupiter.api.Assertions.assertTrue(Assertions.java:210)
+	at com.simulation2.integrators.VelocityVerletTest.testEnergyConservationTwoBody(VelocityVerletTest.java:39)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+
+com.simulation2.integrators.VelocityVerletTest.testOrderOfAccuracyHarmonicOscillator -- Time elapsed: 0.002 s <<< FAILURE!
+org.opentest4j.AssertionFailedError: Error de posición mayor al esperado: 4.14e-14 (esperado: 1.00e-16) ==> expected: <true> but was: <false>
+	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+	at org.junit.jupiter.api.AssertTrue.failNotTrue(AssertTrue.java:63)
+	at org.junit.jupiter.api.AssertTrue.assertTrue(AssertTrue.java:36)
+	at org.junit.jupiter.api.Assertions.assertTrue(Assertions.java:210)
+	at com.simulation2.integrators.VelocityVerletTest.testOrderOfAccuracyHarmonicOscillator(VelocityVerletTest.java:134)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+
+com.simulation2.integrators.VelocityVerletTest.testLongTermStability -- Time elapsed: 0.018 s <<< FAILURE!
+org.opentest4j.AssertionFailedError: Drift de energía excesivo en simulación larga: 80.7220% ==> expected: <true> but was: <false>
+	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+	at org.junit.jupiter.api.AssertTrue.failNotTrue(AssertTrue.java:63)
+	at org.junit.jupiter.api.AssertTrue.assertTrue(AssertTrue.java:36)
+	at org.junit.jupiter.api.Assertions.assertTrue(Assertions.java:210)
+	at com.simulation2.integrators.VelocityVerletTest.testLongTermStability(VelocityVerletTest.java:181)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+
