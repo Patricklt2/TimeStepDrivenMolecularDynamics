@@ -1,16 +1,20 @@
 package com.simulation2;
 
+import com.simulation2.integrators.Beeman;
+import com.simulation2.integrators.Gear;
 import com.simulation2.integrators.IIntegrator;
 import com.simulation2.integrators.VelocityVerlet;
 import com.simulation2.models.Simulation;
 
 public class Main {
     public static void main(String[] args) {
+        double K = 10000;
+        final double GAMMA = 100;
 
         System.out.println("Hello, World!");
-        IIntegrator integrator = new VelocityVerlet();
+        IIntegrator integrator = new Beeman(K, GAMMA);
 
-        Simulation s = new Simulation(100, 1, 100, 5, "python/data/sim.csv", integrator);
+        Simulation s = new Simulation(2, 1, 100, 20, "sim.csv", integrator);
         s.run();
     }
 }

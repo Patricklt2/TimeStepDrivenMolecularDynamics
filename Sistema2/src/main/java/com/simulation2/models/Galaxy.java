@@ -74,7 +74,7 @@ public class Galaxy {
      * - Velocidades con dirección aleatoria y módulo |v| = 0.1
      * - Evita superposiciones iniciales para condiciones físicamente realistas
      */
-    private void initializeStars() {
+    public void initializeStars() {
         stars = new Particle[numberOfStars];
         
         // Distancia mínima entre partículas (basada en el parámetro de suavizado)
@@ -188,7 +188,7 @@ public class Galaxy {
     }
 
 
-        public void calculateForces(double G, double h) {
+    public void calculateForces(double G, double h) {
         // Mismo método para todos los integradores
         for (Particle p : stars) {
             p.resetForce();
@@ -199,29 +199,45 @@ public class Galaxy {
                 Particle pi = stars[i];
                 Particle pj = stars[j];
 
-                Vector3D force = calculateForce(
+                Vector3D force = calculateForceFromP1ToP2(
                     pi.getPosition(), pi.getMass(),
                     pj.getPosition(), pj.getMass(),
                     G, h
                 );
                 
-                pi.addForce(force);
-                pj.addForce(force.negate());
+                pi.addForce(force.negate());
+                pj.addForce(force);
             }
         }
     }
-    
-    private Vector3D calculateForce(
+
+    /**
+     * Calcula la fuerza que p1 ejerce sobre p2
+     *
+     *                                F12
+     *                               <——-
+     *                p1 ———---------———> p2
+     *                          r
+     *
+     * @param pos1 posicion de particula 1
+     * @param m1 masa de particula 1
+     * @param pos2 posicion de particula 2
+     * @param m2 masa de particula 2
+     * @param G G
+     * @param h h
+     * @return fuerza ejercida sobre p2
+     */
+    public Vector3D calculateForceFromP1ToP2(
             Vector3D pos1, double m1, 
             Vector3D pos2, double m2,
             double G, double h) {
         
         Vector3D r = pos2.subtract(pos1);
-        double r2 = r.getNormSq() + h * h;
-        double r_mag = Math.sqrt(r2);
-        double forceMag = - G * m1 * m2 / (r2 * r_mag);
+        double r_soft = r.getNormSq() + h * h;
+        double denominator = Math.pow(r_soft, 1.5);
+        double forceMag = - G * m1 * m2 / denominator;
         
-        return r.normalize().scalarMultiply(forceMag);
+        return r.scalarMultiply(forceMag);
     }
     
     /**
