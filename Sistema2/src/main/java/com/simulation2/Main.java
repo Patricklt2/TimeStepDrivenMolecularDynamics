@@ -12,7 +12,7 @@ public class Main {
         System.out.println("Hello, World!");
         IIntegrator2 integrator = new VelocityVerlet2();
 
-        Simulation2 s = new Simulation2(2, 1, 100, 5, 0.0001, "sim.csv", integrator);
+        Simulation2 s = new Simulation2(2, 1, 100, 2, 0.0001, "sim.csv", integrator);
         s.run();
     }
 }
