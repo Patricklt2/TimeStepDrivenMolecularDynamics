@@ -16,7 +16,7 @@ public class Simulation2 {
     private final double h = 0.05;
     private final int N; // número de partículas
     private final double maxTime;
-    private final double timeStep = 0.01;
+    private final double timeStep;
     private final double printingStep = 1.0;
 
     private final IIntegrator2 integrator;
@@ -25,12 +25,13 @@ public class Simulation2 {
     private final String filename;
     private static final Logger logger = LoggerFactory.getLogger(Simulation.class);
 
-    public Simulation2(int n, int numGalaxies, double galaxyDistance, double maxTime, String filename, IIntegrator2 integrator) {
+    public Simulation2(int n, int numGalaxies, double galaxyDistance, double maxTime, double timeStep, String filename, IIntegrator2 integrator) {
         this.N = n;
         this.galaxies = new Galaxy2[numGalaxies];
         this.filename = filename;
         this.maxTime = maxTime;
         this.integrator = integrator;
+        this.timeStep = timeStep;
         initializeGalaxies(numGalaxies, galaxyDistance);
         initializeStarsAcceleration();
     }

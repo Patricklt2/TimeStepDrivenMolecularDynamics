@@ -1,10 +1,8 @@
 package com.simulation2;
 
-import com.simulation2.integrators.Beeman;
-import com.simulation2.integrators.Gear;
-import com.simulation2.integrators.IIntegrator;
-import com.simulation2.integrators.VelocityVerlet;
+import com.simulation2.integrators.*;
 import com.simulation2.models.Simulation;
+import com.simulation2.models.Simulation2;
 
 public class Main {
     public static void main(String[] args) {
@@ -12,9 +10,9 @@ public class Main {
         final double GAMMA = 100;
 
         System.out.println("Hello, World!");
-        IIntegrator integrator = new Beeman(K, GAMMA);
+        IIntegrator2 integrator = new VelocityVerlet2();
 
-        Simulation s = new Simulation(2, 1, 100, 20, "sim.csv", integrator);
+        Simulation2 s = new Simulation2(2, 1, 100, 5, 0.0001, "sim.csv", integrator);
         s.run();
     }
 }

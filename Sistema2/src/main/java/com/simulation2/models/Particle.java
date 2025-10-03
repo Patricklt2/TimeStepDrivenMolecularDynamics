@@ -60,7 +60,7 @@ public class Particle {
 
         Vector3D r12 = other.getPosition().subtract(position);
         double r12_soft = r12.getNormSq() + Math.pow(h, 2);
-        double denominator = Math.pow(r12_soft, 1.5);
+        double denominator = Math.pow(r12_soft, 3.0/2.0);
         double forceMag = - G * mass * other.getMass() / denominator;
 
         return r12.scalarMultiply(forceMag);
@@ -75,7 +75,7 @@ public class Particle {
     public Vector3D getVelocity() {
         return velocity;
     }
-    
+
     public Vector3D getAcceleration() {
         return acceleration;
     }
