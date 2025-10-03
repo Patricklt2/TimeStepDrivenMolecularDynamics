@@ -11,8 +11,10 @@ public class Main {
 
         System.out.println("Hello, World!");
         IIntegrator2 integrator = new VelocityVerlet2();
+        double timeStep = 0.0001;
+        String filename = "sim_dt_" + timeStep + ".csv";
 
-        Simulation2 s = new Simulation2(2, 1, 100, 2, 0.0001, "sim.csv", integrator);
+        Simulation2 s = new Simulation2(2, 1, 100, 5, timeStep, filename, integrator);
         s.run();
     }
 }
