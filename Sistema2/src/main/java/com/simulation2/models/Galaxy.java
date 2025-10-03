@@ -12,11 +12,34 @@ public class Galaxy {
     private static final Logger logger = LoggerFactory.getLogger(Galaxy.class);
     private final String name;
     private int numberOfStars;
-    private Vector3D centerPosition; // cambia cuando se mueve la galaxia
+    private Vector3D centerPosition;
     private Particle[] stars;
+    private final double G = 1.0;
+    private final double h = 0.05;
     
-    private final double initialVelocity = 0.1; // velocidad inicial de las estrellas
+    private final double initialVelocity = 0.1;
     private final Random random = new Random();
+
+
+    ForceCalculator forceCalculator = (pList) -> {
+        for (Particle p : pList) {
+            p.resetForce();
+        }
+
+        for (int i = 0; i < pList.size(); i++) {
+            for (int j = i + 1; j < pList.size(); j++) {
+                Particle pi = pList.get(i);
+                Particle pj = pList.get(j);
+                Vector3D force = calculateForceFromP1ToP2(
+                    pi.getPosition(), pi.getMass(),
+                    pj.getPosition(), pj.getMass(),
+                    G, h
+                );
+                pi.addForce(force);
+                pj.addForce(force.negate());
+            }
+        }
+    };
     
     public Galaxy(String name, int numberOfStars, Vector3D centerPosition) {
         this.name = name;
@@ -163,7 +186,7 @@ public class Galaxy {
         double z3 = random.nextGaussian();
         
         Vector3D vector = new Vector3D(z1, z2, z3);
-        return vector.normalize(); // normalizar para obtener vector unitario
+        return vector.normalize();
     }
     
     /**
@@ -205,8 +228,8 @@ public class Galaxy {
                     G, h
                 );
                 
-                pi.addForce(force.negate());
-                pj.addForce(force);
+                pi.addForce(force);
+                pj.addForce(force.negate());
             }
         }
     }
@@ -233,10 +256,10 @@ public class Galaxy {
             double G, double h) {
         
         Vector3D r = pos2.subtract(pos1);
-        double r_soft = r.getNormSq() + h * h;
-        double denominator = Math.pow(r_soft, 1.5);
+        double r_soft = Math.sqrt(r.getNormSq() + h * h); 
+        double denominator = Math.pow(r_soft, 3);          
         double forceMag = - G * m1 * m2 / denominator;
-        
+
         return r.scalarMultiply(forceMag);
     }
     
@@ -278,12 +301,9 @@ public class Galaxy {
         }
         return starLines;
     }
-
+    
     public void integratorMethod(IIntegrator integrator, double dt, double G, double h){
         List<Particle> ls = Arrays.asList(this.stars);
-        calculateForces(G, h);
-        integrator.updatePositions(ls, dt);
-        calculateForces(G, h);
-        integrator.updateVelocities(ls, dt);
+        integrator.step(ls, dt, forceCalculator);
     }
 }

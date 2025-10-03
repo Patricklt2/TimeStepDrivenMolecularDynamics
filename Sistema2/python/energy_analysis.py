@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import os
-from itertools import combinations
+from scipy.spatial.distance import pdist, squareform
 
 # --- Constantes de la Simulación ---
 # Asegúrate de que coincidan con tu archivo Simulation.java
@@ -12,7 +12,7 @@ MASS = 1.0 # Masa unitaria de cada partícula
 
 def parse_simulation_output(filename="sim.csv"):
     """
-    Procesa el archivo de salida CSV de la simulación.
+    Procesa el archivo de salida CSV de la simulación de forma optimizada.
 
     Este formato es particular, con un encabezado de galaxia por cada
     paso de tiempo, seguido por los datos de cada partícula.
@@ -21,95 +21,101 @@ def parse_simulation_output(filename="sim.csv"):
         Un diccionario que mapea el tiempo (float) a un DataFrame de pandas
         con los datos de las partículas en ese instante.
     """
+    print(f"Leyendo el archivo de simulación: {filename}...")
+
+    # Lectura más rápida usando readlines
+    with open(filename, 'r') as f:
+        lines = f.readlines()
+
     timesteps = {}
     current_time = None
     particle_data = []
-    
-    print(f"Leyendo el archivo de simulación: {filename}...")
-    
-    with open(filename, 'r') as f:
-        for line in f:
-            line = line.strip()
-            if not line:
+
+    for line in lines:
+        line = line.strip()
+        if not line:
+            continue
+
+        parts = line.split(';')
+
+        # Una línea de encabezado de galaxia tiene 5 partes: tiempo, nombre, x, y, z
+        if len(parts) == 5 and 'Galaxy' in parts[1]:
+            try:
+                time_val = float(parts[0])
+                # Si ya teníamos datos de partículas, los guardamos
+                if current_time is not None and particle_data:
+                    # Conversión más rápida a DataFrame usando dtype específico
+                    df = pd.DataFrame(particle_data, columns=['id', 'x', 'y', 'z', 'vx', 'vy', 'vz', 'fx', 'fy', 'fz'])
+                    df = df.astype(float)
+                    timesteps[current_time] = df
+
+                # Empezamos un nuevo paso de tiempo
+                current_time = time_val
+                particle_data = []
+            except (ValueError, IndexError):
                 continue
-            
-            parts = line.split(';')
-            
-            # Una línea de encabezado de galaxia tiene 5 partes: tiempo, nombre, x, y, z
-            if len(parts) == 5 and 'Galaxy' in parts[1]:
-                try:
-                    time_val = float(parts[0])
-                    # Si ya teníamos datos de partículas, los guardamos antes de empezar un nuevo paso
-                    if current_time is not None and particle_data:
-                        df = pd.DataFrame(particle_data, columns=['id', 'x', 'y', 'z', 'vx', 'vy', 'vz', 'fx', 'fy', 'fz'])
-                        df = df.apply(pd.to_numeric)
-                        timesteps[current_time] = df
+        # Una línea de partícula tiene 10 partes
+        elif len(parts) == 10:
+            if current_time is not None:
+                particle_data.append(parts)
 
-                    # Empezamos un nuevo paso de tiempo
-                    current_time = time_val
-                    particle_data = []
-                except (ValueError, IndexError):
-                    continue # No es una línea de encabezado válida
-            # Una línea de partícula tiene 10 partes
-            elif len(parts) == 10:
-                if current_time is not None:
-                    particle_data.append(parts)
-
-    # Guarda el último bloque de datos que quedó en memoria
+    # Guarda el último bloque de datos
     if current_time is not None and particle_data:
         df = pd.DataFrame(particle_data, columns=['id', 'x', 'y', 'z', 'vx', 'vy', 'vz', 'fx', 'fy', 'fz'])
-        df = df.apply(pd.to_numeric)
+        df = df.astype(float)
         timesteps[current_time] = df
-        
+
     print(f"Se procesaron {len(timesteps)} pasos de tiempo.")
     return timesteps
 
-def calculate_total_energy(particles_df):
+def calculate_kinetic_energy(particles_df):
     """
-    Calcula la energía total (Cinética + Potencial) para un conjunto
-    de partículas en un instante de tiempo.
+    Calcula la energía cinética total del sistema.
+    KE = 0.5 * m * v^2
     """
-    # --- Cálculo de Energía Cinética ---
-    # KE = 0.5 * m * v^2. Como m=1, KE = 0.5 * (vx^2 + vy^2 + vz^2)
     velocities_sq = particles_df[['vx', 'vy', 'vz']]**2
     kinetic_energies = 0.5 * MASS * velocities_sq.sum(axis=1)
-    total_ke = kinetic_energies.sum()
+    return kinetic_energies.sum()
 
-    # --- Cálculo de Energía Potencial ---
-    # PE = sumatoria sobre pares (i,j) de -G*mi*mj / sqrt(r_ij^2 + h^2)
-    # Como m=1, PE = sumatoria de -G / sqrt(r_ij^2 + h^2)
-    total_pe = 0
+def calculate_potential_energy(particles_df):
+    """
+    Calcula la energía potencial gravitacional del sistema de forma optimizada.
+    PE = Σ(-G*m_i*m_j / sqrt(r_ij^2 + h^2))
+
+    Usa scipy.spatial.distance para cálculo vectorizado más rápido.
+    """
     positions = particles_df[['x', 'y', 'z']].values
-    
-    # Usamos itertools.combinations para obtener todos los pares únicos de partículas
-    for i, j in combinations(range(len(positions)), 2):
-        pos_i = positions[i]
-        pos_j = positions[j]
-        
-        dist_sq = np.sum((pos_i - pos_j)**2)
-        
-        pe_pair = -G * MASS * MASS / np.sqrt(dist_sq + H**2)
-        total_pe += pe_pair
-        
-    return total_ke + total_pe
+
+    # Cálculo vectorizado de distancias usando scipy
+    # pdist calcula todas las distancias pareadas de forma eficiente
+    distances = pdist(positions, metric='euclidean')
+
+    # Aplicar la fórmula de energía potencial con suavizado
+    # PE = -G * m^2 / sqrt(r^2 + h^2) para cada par
+    potential_energies = G * MASS * MASS / np.sqrt(distances**2 + H**2)
+
+    return potential_energies.sum()
+
+def calculate_total_energy(particles_df):
+    """
+    Calcula la energía total (Cinética + Potencial) del sistema.
+    """
+    ke = calculate_kinetic_energy(particles_df)
+    pe = calculate_potential_energy(particles_df)
+    return ke, pe, ke + pe
 
 def main():
     """
     Función principal para ejecutar el análisis.
     """
     # --- CONSTRUCCIÓN DE LA RUTA AL ARCHIVO ---
-    # Esto hace que la ruta sea robusta, sin importar desde dónde se llame al script.
     try:
-        # Directorio donde se encuentra este script
         script_dir = os.path.dirname(os.path.abspath(__file__))
-        # Ruta al archivo de datos
         data_file_path = os.path.join(script_dir, "data", "sim.csv")
     except NameError:
-        # Fallback para entornos interactivos (como Jupyter) donde __file__ no existe
         data_file_path = "python/data/sim.csv"
 
-
-    # 1. Procesar el archivo de datos usando la ruta que construimos
+    # 1. Procesar el archivo de datos
     try:
         print(f"Buscando archivo de datos en: {os.path.abspath(data_file_path)}")
         data_by_time = parse_simulation_output(data_file_path)
@@ -118,41 +124,72 @@ def main():
         print("Asegúrate de que la simulación en Java se haya ejecutado y guardado el archivo en la carpeta 'python/data/'.")
         return
 
-    # ... (El resto de la función sigue exactamente igual)
-    # ... (Cálculo y graficado de la energía)
-    
     if not data_by_time:
         print("No se procesaron datos. El archivo 'sim.csv' podría estar vacío o en un formato incorrecto.")
         return
 
-    # 2. Calcular la energía para cada paso de tiempo
+    # 2. Calcular las energías para cada paso de tiempo
+    print("\nCalculando energías...")
     times = sorted(data_by_time.keys())
+    kinetic_energies = []
+    potential_energies = []
     total_energies = []
-    for t in times:
-        particles = data_by_time[t]
-        energy = calculate_total_energy(particles)
-        total_energies.append(energy)
-        print(f"Tiempo: {t:.2f}, Energía Total: {energy:.4f}")
 
-    # 3. Graficar los resultados
-    plt.figure(figsize=(12, 8))
-    plt.plot(times, total_energies, marker='o', linestyle='-', markersize=3, label='Energía Total')
-    plt.xlabel('Tiempo de Simulación (s)')
-    plt.ylabel('Energía Total del Sistema')
-    plt.title('Conservación de la Energía en la Simulación de Galaxias')
-    plt.grid(True)
-    
-    if total_energies:
-        initial_energy = total_energies[0]
-        plt.axhline(y=initial_energy, color='r', linestyle='--', label=f'Energía Inicial ({initial_energy:.2f})')
-    
-    plt.legend()
+    for i, t in enumerate(times):
+        particles = data_by_time[t]
+        ke, pe, total = calculate_total_energy(particles)
+        kinetic_energies.append(ke)
+        potential_energies.append(pe)
+        total_energies.append(total)
+
+        # Mostrar progreso cada 10% aproximadamente
+        if i % max(1, len(times) // 10) == 0 or i == len(times) - 1:
+            print(f"Progreso: {i+1}/{len(times)} - Tiempo: {t:.4f}s, KE: {ke:.4f}, PE: {pe:.4f}, Total: {total:.4f}")
+
+    # 3. Calcular el error relativo respecto a la energía inicial
+    initial_energy = total_energies[0]
+    relative_errors = [(E - initial_energy) / abs(initial_energy) * 100 for E in total_energies]
+
+    print(f"\n=== RESUMEN ===")
+    print(f"Energía inicial: {initial_energy:.6f}")
+    print(f"Energía final: {total_energies[-1]:.6f}")
+    print(f"Cambio absoluto: {total_energies[-1] - initial_energy:.6f}")
+    print(f"Error relativo final: {relative_errors[-1]:.6f}%")
+
+    # 4. Crear gráfico de energías
+    output_dir = os.path.dirname(data_file_path)
+
+    plt.figure(figsize=(14, 6))
+
+    # Gráfico 1: Las tres energías en uno
+    plt.subplot(1, 2, 1)
+    plt.plot(times, kinetic_energies, label='Energía Cinética', linewidth=2, alpha=0.8)
+    plt.plot(times, potential_energies, label='Energía Potencial', linewidth=2, alpha=0.8)
+    plt.plot(times, total_energies, label='Energía Total', linewidth=2, alpha=0.9, color='black', linestyle='--')
+    plt.axhline(y=initial_energy, color='red', linestyle=':', alpha=0.5, label=f'E₀ = {initial_energy:.2f}')
+    plt.xlabel('Tiempo de Simulación (s)', fontsize=11)
+    plt.ylabel('Energía', fontsize=11)
+    plt.title('Evolución de las Energías del Sistema', fontsize=12, fontweight='bold')
+    plt.legend(loc='best')
+    plt.grid(True, alpha=0.3)
+
+    # # Gráfico 2: Error relativo
+    # plt.subplot(1, 2, 2)
+    # plt.plot(times, relative_errors, color='red', linewidth=2)
+    # plt.axhline(y=0, color='black', linestyle='--', alpha=0.5)
+    # plt.xlabel('Tiempo de Simulación (s)', fontsize=11)
+    # plt.ylabel('Error Relativo (%)', fontsize=11)
+    # plt.title('Error Relativo de Conservación de Energía', fontsize=12, fontweight='bold')
+    # plt.grid(True, alpha=0.3)
+
     plt.tight_layout()
 
-    # Guardar el gráfico en la carpeta python
-    output_filename = os.path.join(os.path.dirname(data_file_path), "total_energy_plot.png")
-    plt.savefig(output_filename)
-    print(f"\n¡Análisis completo! Gráfico guardado en: {output_filename}")
+    # Guardar gráfico combinado
+    combined_output = os.path.join(output_dir, "energy_analysis.png")
+    plt.savefig(combined_output, dpi=150)
+    print(f"\n¡Análisis completo! Gráfico guardado en: {combined_output}")
+
+    plt.show()
 
 if __name__ == "__main__":
     main()
