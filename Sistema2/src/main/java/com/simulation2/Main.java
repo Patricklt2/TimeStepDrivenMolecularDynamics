@@ -19,6 +19,15 @@ public class Main {
         s.run();
     }
 
+    public static void dtRun(){
+        IIntegrator2 integrator = new VelocityVerlet2();
+        double timeStep = 0.0001;
+        String filename = "sim_dt_" + timeStep + ".csv";
+        Simulation2 s = new Simulation2(2, 1, 100, 5, timeStep, filename, integrator);
+        s.run();
+    }
+
+
     public static void runfor2() {
         IIntegrator2 integrator = new VelocityVerlet2();
 

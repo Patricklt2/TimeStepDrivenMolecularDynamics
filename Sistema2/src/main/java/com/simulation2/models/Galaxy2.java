@@ -93,7 +93,7 @@ public class Galaxy2 {
     public void initializeStars() {
         stars = new Particle[numberOfStars];
 
-        final double minDistance = 0.1;
+        final double minDistance = 0.05;
         // Un radio "efectivo" para la galaxia, actúa como un multiplicador del desvío estándar.
         final double galaxyRadiusScale = 1.5;
         final int maxAttemptsPerStar = 5000;

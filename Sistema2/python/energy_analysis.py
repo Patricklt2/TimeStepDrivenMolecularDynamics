@@ -120,7 +120,6 @@ def main():
 
     plt.xlabel('Tiempo de Simulación (s)')
     plt.ylabel('Energía')
-    plt.title('Energía Cinética, Potencial y Total en la Simulación')
     plt.grid(True)
 
     if total_energies:
