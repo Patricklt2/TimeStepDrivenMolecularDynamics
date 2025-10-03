@@ -13,7 +13,7 @@ public class Main {
         System.out.println("Hello, World!");
         IIntegrator integrator = new Beeman();
 
-        Simulation s = new Simulation(2, 1, 0, 15, "sim.csv", integrator);
+        Simulation s = new Simulation(4, 1, 0, 15, "sim.csv", integrator);
         s.run();
     }
 }

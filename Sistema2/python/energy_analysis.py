@@ -162,7 +162,7 @@ def main():
     plt.figure(figsize=(14, 6))
 
     # Gráfico 1: Las tres energías en uno
-    plt.subplot(1, 2, 1)
+    #plt.subplot(1, 2, 1)
     plt.plot(times, kinetic_energies, label='Energía Cinética', linewidth=2, alpha=0.8)
     plt.plot(times, potential_energies, label='Energía Potencial', linewidth=2, alpha=0.8)
     plt.plot(times, total_energies, label='Energía Total', linewidth=2, alpha=0.9, color='black', linestyle='--')
@@ -181,8 +181,6 @@ def main():
     # plt.ylabel('Error Relativo (%)', fontsize=11)
     # plt.title('Error Relativo de Conservación de Energía', fontsize=12, fontweight='bold')
     # plt.grid(True, alpha=0.3)
-
-    plt.tight_layout()
 
     # Guardar gráfico combinado
     combined_output = os.path.join(output_dir, "energy_analysis.png")
