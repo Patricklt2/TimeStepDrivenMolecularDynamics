@@ -1,15 +1,13 @@
 package com.simulation2.models;
 
-import com.simulation2.integrators.IIntegrator;
-import com.simulation2.integrators.IIntegrator2;
-import com.simulation2.utils.CSVWriter;
-import com.simulation2.utils.CSVWriter2;
+import java.io.IOException;
+
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.util.List;
+import com.simulation2.integrators.IIntegrator2;
+import com.simulation2.utils.CSVWriter2;
 
 public class Simulation2 {
     private final double G = 1.0;
@@ -17,7 +15,7 @@ public class Simulation2 {
     private final int N; // número de partículas
     private final double maxTime;
     private final double timeStep;
-    private final double printingStep = 1.0;
+    private final double printingStep = 20.0;
 
     private final IIntegrator2 integrator;
     private final Galaxy2[] galaxies;
@@ -73,13 +71,14 @@ public class Simulation2 {
         logger.debug("Total particles: " + N);
 
         writeToFile(galaxies); // initial state
-
+        int current = 0;
         while (totalTime < maxTime) {
             totalTime += timeStep;
             for (Galaxy2 galaxy : galaxies) {
                 integrator.step(galaxy.getStars(), timeStep, G, h);
             }
-            writeToFile(galaxies);
+            if(current++ % printingStep == 0)
+                writeToFile(galaxies);
         }
         logger.info("Simulation finished.");
         writeToFile(galaxies); // final state
