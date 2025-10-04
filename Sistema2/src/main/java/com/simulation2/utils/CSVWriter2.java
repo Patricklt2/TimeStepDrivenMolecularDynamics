@@ -1,6 +1,7 @@
 package com.simulation2.utils;
 
 import com.simulation2.models.Galaxy;
+import com.simulation2.models.Galaxy2;
 
 import java.io.BufferedWriter;
 import java.io.Closeable;
@@ -14,7 +15,7 @@ public class CSVWriter2 implements AutoCloseable {
 
     }
 
-    public void writeData(double t, Galaxy g) throws IOException {
+    public void writeData(double t, Galaxy2 g) throws IOException {
         String[] starLines = g.toFileGalaxyStars();
         writer.write(t + ";" + g.toFileGalaxyHeader() + "\n");
         for (String line : starLines) {
