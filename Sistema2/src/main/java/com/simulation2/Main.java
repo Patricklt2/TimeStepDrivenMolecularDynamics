@@ -10,7 +10,7 @@ import com.simulation2.models.Simulation2;
 
 public class Main {
     public static void main(String[] args) {
-        defaultRun();
+        runfor2();
     }
 
     public static void defaultRun(){
@@ -40,7 +40,7 @@ public class Main {
                 final int currentJ = j;
 
                 Runnable simulationTask = () -> {
-                    Simulation2 s = new Simulation2(currentI, 1, 100, 1, 0.001,
+                    Simulation2 s = new Simulation2(currentI, 1, 100, 60, 0.001,
                             String.format("sim_%d_%d.csv", currentI, currentJ), integrator);
                     s.run();
                 };
