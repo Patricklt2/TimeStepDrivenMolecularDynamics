@@ -10,101 +10,31 @@ import java.util.List;
 import java.util.Random;
 
 public class Galaxy2 {
-    private static final Logger logger = LoggerFactory.getLogger(Galaxy.class);
-    private final String name;
-    private int numberOfStars;
-    private Vector3D centerPosition; // cambia cuando se mueve la galaxia
-    private Particle[] stars;
+    private static final Logger logger = LoggerFactory.getLogger(Galaxy2.class);
+    private static final double INITIAL_STAR_VELOCITY_MAGNITUDE = 0.1; // velocidad inicial de las estrellas
+    private static final Random random = new Random();
 
-    private final double initialVelocity = 0.1; // velocidad inicial de las estrellas
-    private final Random random = new Random();
-
-    public Galaxy2(String name, int numberOfStars, Vector3D centerPosition) {
-        this.name = name;
-        this.numberOfStars = numberOfStars;
-        this.centerPosition = centerPosition;
-        initializeStars();
-    }
-
-    /** ----------------- for testing purposes ----------------- **/
-
-    public void setStars(Particle[] stars){
-        this.stars = stars;
-    }
-
-
-    /** ----------------- Getters ----------------- **/
-
-    public String getName() {
-        return name;
-    }
-
-    public Vector3D getCenterPosition() {
-        return centerPosition;
-    }
-
-    public int getNumberOfStars() {
-        return numberOfStars;
-    }
-
-    public Particle[] getStars() {
-        return stars;
-    }
-
-    /** ----------------- Setters ----------------- **/
-
-    public void setNumberOfStars(int numberOfStars) {
-        this.numberOfStars = numberOfStars;
-        initializeStars();
-    }
-
-    /** ----------------- Proper Methods ----------------- **/
-
-    public void calculateNewCenterPosition() {
-        Vector3D sumPositions = Vector3D.ZERO;
-        for (Particle star : stars) {
-            sumPositions = sumPositions.add(star.getPosition());
-        }
-        this.centerPosition = sumPositions.scalarMultiply(1.0 / numberOfStars);
-    }
+    private Galaxy2() {}
 
     /**
-     * Calcula la velocidad del centro de masa de la galaxia
-     * v_cm = (Σ m_i * v_i) / (Σ m_i)
-     * Como todas las masas son unitarias: v_cm = (Σ v_i) / N
+     * Inicializa las estrellas según los requisitos del enunciado y les
+     * suma a cada una la velocidad neta de la galaxia
      */
-    public Vector3D getCenterVelocity() {
-        Vector3D sumVelocities = Vector3D.ZERO;
-        for (Particle star : stars) {
-            sumVelocities = sumVelocities.add(star.getVelocity());
-        }
-        return sumVelocities.scalarMultiply(1.0 / numberOfStars);
-    }
+    public static Particle[] initializeStars(int galaxyId, int particleOffset, int numStars, Vector3D centerPosition, Vector3D initialGalaxyVelocity) {
+        Particle[] stars = new Particle[numStars];
 
-    /**
-     * Inicializa las estrellas según los requisitos del enunciado:
-     * - Masa unitaria (mi = 1)
-     * - Posiciones distribuidas normalmente con centro en el origen y desvío unitario
-     * - Velocidades con dirección aleatoria y módulo |v| = 0.1
-     * - Evita superposiciones iniciales para condiciones físicamente realistas
-     *
-     * A CHEQUEAR (creía que esto estaba mal, así que no darle bola)
-     */
-    public void initializeStars() {
-        stars = new Particle[numberOfStars];
-
-        /*Particle p1 = new Particle(1, new Vector3D(0, 0, 0), new Vector3D(0,-1,0));
-        Particle p2 = new Particle(2, new Vector3D(0.2, 0, 0), new Vector3D(0,1,0));
+        Particle p1 = new Particle(1, 1, new Vector3D(0, 0, 0), new Vector3D(0,0,0));
+        Particle p2 = new Particle(2, 1, new Vector3D(0.2, 0, 0), new Vector3D(0,0,0));
 
         stars[0] = p1;
         stars[1] = p2;
-*/
-        final double minDistance = 0.05;
+
+        /*final double minDistance = 0.05;
         // Un radio "efectivo" para la galaxia, actúa como un multiplicador del desvío estándar.
-        final double galaxyRadiusScale = 1.5;
+        final double galaxyRadiusScale = 1;
         final int maxAttemptsPerStar = 5000;
 
-        for (int i = 0; i < numberOfStars; i++) {
+        for (int i = 0; i < numStars; i++) {
             Vector3D position;
             boolean validPosition;
             int attempts = 0;
@@ -142,16 +72,18 @@ public class Galaxy2 {
 
             // La inicialización de la velocidad no cambia.
             Vector3D randomDirectionForVelocity = generateRandomUnitVector();
-            Vector3D velocity = randomDirectionForVelocity.scalarMultiply(initialVelocity);
+            Vector3D velocity = randomDirectionForVelocity.scalarMultiply(INITIAL_STAR_VELOCITY_MAGNITUDE).add(initialGalaxyVelocity);
 
-            stars[i] = new Particle(i, position, velocity);
-        }
+            stars[i] = new Particle(i+particleOffset, galaxyId, position, velocity);
+        }*/
+
+        return stars;
     }
 
     /**
      * Genera un vector unitario con dirección aleatoria
      */
-    private Vector3D generateRandomUnitVector() {
+    private static Vector3D generateRandomUnitVector() {
         // Genera tres números aleatorios de una distribución normal.
         double x = random.nextGaussian();
         double y = random.nextGaussian();
@@ -160,52 +92,5 @@ public class Galaxy2 {
         Vector3D vector = new Vector3D(x, y, z);
 
         return vector.normalize();
-    }
-
-    /**
-     * Método para mover toda la galaxia a una nueva posición
-     * Útil para configurar colisiones entre galaxias
-     */
-    public void moveGalaxy(Vector3D displacement) {
-        this.centerPosition = this.centerPosition.add(displacement);
-        for (Particle star : stars) {
-            Vector3D newPosition = star.getPosition().add(displacement);
-            star.setPosition(newPosition);
-        }
-    }
-
-
-    /**
-     * Método para agregar una velocidad inicial a toda la galaxia
-     * Útil para simular colisiones entre galaxias
-     * Esta velocidad se suma a la velocidad individual de cada estrella
-     */
-    public void addGalaxyVelocity(Vector3D galaxyVelocity) {
-        for (Particle star : stars) {
-            Vector3D newVelocity = star.getVelocity().add(galaxyVelocity);
-            star.setVelocity(newVelocity);
-        }
-    }
-
-    /** ----------------- Aux Methods ----------------- **/
-
-
-    @Override
-    public String toString() {
-        return String.format("Galaxy{name='%s', numberOfStars=%d, centerPosition=%s}",
-                name, numberOfStars, centerPosition);
-    }
-
-    public String toFileGalaxyHeader(){
-        return String.format("%s;%.5e;%.5e;%.5e",
-                name, centerPosition.getX(), centerPosition.getY(), centerPosition.getZ());
-    }
-
-    public String[] toFileGalaxyStars(){
-        String[] starLines = new String[numberOfStars];
-        for (int i = 0; i < numberOfStars; i++) {
-            starLines[i] = stars[i].toFileString();
-        }
-        return starLines;
     }
 }

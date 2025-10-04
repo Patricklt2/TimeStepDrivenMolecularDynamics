@@ -11,25 +11,18 @@ public class Particle {
     private Vector3D force;
     private final double mass = 1.0; // masa unitaria
     private final int id;
+    private final int galaxyId;
 
 
-    public Particle(int id, Vector3D initialPosition, Vector3D initialVelocity) {
+    public Particle(int id, int galaxyId, Vector3D initialPosition, Vector3D initialVelocity) {
         this.id = id;
+        this.galaxyId = galaxyId;
         this.position = new Vector3D(initialPosition.getX(), 
                                      initialPosition.getY(), 
                                      initialPosition.getZ());
         this.velocity = new Vector3D(initialVelocity.getX(), 
                                      initialVelocity.getY(), 
                                      initialVelocity.getZ());
-        this.acceleration = Vector3D.ZERO;
-        this.force = Vector3D.ZERO;
-    }
-
-    // TODO: Posición aleatoria; ver de incluir los limites de rand de posicion
-    public Particle(int id) {
-        this.id = id;
-        this.position = Vector3D.ZERO;
-        this.velocity = Vector3D.ZERO;
         this.acceleration = Vector3D.ZERO;
         this.force = Vector3D.ZERO;
     }
@@ -131,22 +124,20 @@ public class Particle {
 
     @Override
     public String toString() {
-        return String.format("Particle[id=%d, pos=(%.3f,%.3f,%.3f), vel=(%.3f,%.3f,%.3f), m=%.3f]",
-                id,
+        return String.format("Particle[id=%d, galaxyId=%d, pos=(%.3f,%.3f,%.3f), vel=(%.3f,%.3f,%.3f), m=%.3f]",
+                id, galaxyId,
                 position.getX(), position.getY(), position.getZ(),
                 velocity.getX(), velocity.getY(), velocity.getZ(),
                 mass);
     }
-    public static String fileHeader() {
-        return "id;x;y;z;vx;vy;vz;fx;fy;fz";
-    }
     
     // Método para guardar estado en archivo
     public String toFileString() {
-        return String.format("%d;%.15e;%.15e;%.15e;%.15e;%.15e;%.15e;%.15e;%.15e;%.15e",
+        // Añadimos galaxyId al principio para facilitar el parsing y el coloreado
+        return String.format("%d;%d;%.15e;%.15e;%.15e;%.15e;%.15e;%.15e",
                 id,
+                galaxyId,
                 position.getX(), position.getY(), position.getZ(),
-                velocity.getX(), velocity.getY(), velocity.getZ(),
-                force.getX(), force.getY(), force.getZ());
+                velocity.getX(), velocity.getY(), velocity.getZ());
     }
 }

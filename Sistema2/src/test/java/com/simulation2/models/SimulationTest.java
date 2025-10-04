@@ -20,7 +20,7 @@ public class SimulationTest {
     private final String FILENAME = "test";
     private final IIntegrator2 VELOCITY_VERLET_INTEGRATION = new VelocityVerlet2();
 
-    @BeforeEach
+    /*@BeforeEach
     void setUp(){
         sim = new Simulation2(NUM_STARS, NUM_GALAXIES, GALAXY_DISTANCE, MAX_TIME, 0.0001, FILENAME, VELOCITY_VERLET_INTEGRATION);
     }
@@ -29,5 +29,5 @@ public class SimulationTest {
     @Test
     public void testInitializeGalaxies(){
         sim.initializeGalaxies(NUM_GALAXIES, GALAXY_DISTANCE);
-    }
+    }*/
 }

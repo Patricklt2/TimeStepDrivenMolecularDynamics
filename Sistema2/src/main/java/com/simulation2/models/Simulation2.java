@@ -10,55 +10,64 @@ import com.simulation2.integrators.IIntegrator2;
 import com.simulation2.utils.CSVWriter2;
 
 public class Simulation2 {
-    private final double G = 1.0;
-    private final double h = 0.05;
-    private final int N; // número de partículas
+    // Simulation Variables
     private final double maxTime;
     private final double timeStep;
     private final double printingStep = 50.0;
-
-    private final IIntegrator2 integrator;
-    private final Galaxy2[] galaxies;
-    private double totalTime = 0;
     private final String filename;
-    private static final Logger logger = LoggerFactory.getLogger(Simulation.class);
+    private static final Logger logger = LoggerFactory.getLogger(Simulation2.class);
+    private double totalTime = 0;
+    
+    // Galaxy Info
+    private final double G = 1.0;
+    private final double h = 0.05;
+    private final int starsPerGalaxy;
+    private final int numGalaxies;
+    private final Particle[] stars;
+    private int starOffset;
+    
+    
+    // Integrator for particle movement
+    private final IIntegrator2 integrator;
+    
+    
 
-    public Simulation2(int n, int numGalaxies, double galaxyDistance, double maxTime, double timeStep, String filename, IIntegrator2 integrator) {
-        this.N = n;
-        this.galaxies = new Galaxy2[numGalaxies];
+    public Simulation2(int starsPerGalaxy, int numGalaxies, double maxTime, double timeStep, String filename, IIntegrator2 integrator) {
+        this.starsPerGalaxy = starsPerGalaxy;
+        this.numGalaxies = numGalaxies;
+        this.stars = new Particle[starsPerGalaxy * numGalaxies];
+        this.starOffset = 0;
         this.filename = filename;
         this.maxTime = maxTime;
         this.integrator = integrator;
         this.timeStep = timeStep;
-        initializeGalaxies(numGalaxies, galaxyDistance);
-        initializeStarsAcceleration();
     }
 
     /**
-     * Inicializa las galaxias de la simulación
-     * @param numGalaxies cantidad de galaxias
-     * @param galaxyDistance distancia relativa entre las galaxias
+     * Adds a Galaxy to the simulation
      */
-    public void initializeGalaxies(int numGalaxies, double galaxyDistance) {
-        for (int i = 0; i < numGalaxies; i++) {
-            String name = "Galaxy_" + (i + 1);
-            int starsPerGalaxy = N / numGalaxies;
-            Vector3D centerPosition = new Vector3D(i * galaxyDistance, 0, 0);
-            galaxies[i] = new Galaxy2(name, starsPerGalaxy, centerPosition);
+    public void addGalaxyToSimulation(Vector3D centerPosition, Vector3D initialVelocity) {
+        if(starOffset == starsPerGalaxy * numGalaxies){
+            logger.warn("Cannot add any more galaxies to the simulation.");
+            return;
         }
+        Particle[] newStars = Galaxy2.initializeStars(starOffset / starsPerGalaxy, starOffset,  starsPerGalaxy, centerPosition, initialVelocity);
+        System.arraycopy(newStars, 0, stars, starOffset, starsPerGalaxy);
+        starOffset+=starsPerGalaxy;
     }
 
-
     /**
-     * Calcula la aceleración inicial de las partículas
+     * Prepares simulation to be run. Must be called after all galaxies are initialized
      */
-    public void initializeStarsAcceleration(){
-        for (Galaxy2 galaxy : galaxies) {
-            integrator.calculateForcesBetweenParticles(galaxy.getStars(), G, h);
-            for(Particle p: galaxy.getStars()){
-                p.updateAcceleration();
-                p.setOldAcceleration(p.getAcceleration());
-            }
+    private void prepareSimulation(){
+        if(starOffset < starsPerGalaxy*numGalaxies){
+            logger.warn("Cannot prepare simulation, add {} remaining galaxies", (starsPerGalaxy*numGalaxies - starOffset) / starsPerGalaxy);
+            return;
+        }
+        integrator.calculateForcesBetweenParticles(stars, G, h);
+        for(Particle p: stars){
+            p.updateAcceleration();
+            p.setOldAcceleration(p.getAcceleration());
         }
     }
 
@@ -66,43 +75,42 @@ public class Simulation2 {
     /**
      * Ejecuta la simulación
      */
-    public void run(){
-        logger.info("Starting simulation...");
-        logger.debug("Total particles: " + N);
+    public void run() {
+        logger.info("Iniciando simulación con {} partículas totales", stars.length);
 
-        writeToFile(galaxies); // initial state
-        int current = 0;
+        prepareSimulation();
+
+        writeToFile(); // Escribe el estado inicial (t=0)
+
+        int stepCount = 0;
+        long stepsPerWrite = Math.round(printingStep / timeStep);
+        if (stepsPerWrite == 0) stepsPerWrite = 1;
+
         while (totalTime < maxTime) {
+            integrator.step(stars, timeStep, G, h);
             totalTime += timeStep;
-            for (Galaxy2 galaxy : galaxies) {
-                integrator.step(galaxy.getStars(), timeStep, G, h);
-            }
-            if(current++ % printingStep == 0)
-                writeToFile(galaxies);
+            stepCount++;
+            //if (stepCount % stepsPerWrite == 0) {
+                writeToFile();
+            //}
         }
-        logger.info("Simulation finished.");
-        writeToFile(galaxies); // final state
+
+        writeToFile();
+        logger.info("Simulación finalizada en t={}", totalTime);
     }
 
-    private void writeToFile(Galaxy2[] galaxies) {
-        logger.debug("Writing simulation state to file: " + filename);
-        CSVWriter2 writer = null;
-        try {
-            for (Galaxy2 galaxy : galaxies) {
-                writer = new CSVWriter2(filename);
-                writer.writeData(totalTime, galaxy);
-                writer.close();
-            }
-        } catch (IOException e) {
-            logger.error("Error writing to file: " + e.getMessage());
-        } finally {
-            if (writer != null) {
-                try {
-                    writer.close();
-                } catch (IOException e) {
-                    logger.error("Error closing writer: " + e.getMessage());
+    private void writeToFile() {
+        logger.debug("Escribiendo estado en t={} al archivo: {}", totalTime, filename);
+        // Usamos try-with-resources para asegurar que el writer se cierre siempre
+        try (CSVWriter2 writer = new CSVWriter2(filename, true)) { // 'true' para modo append
+            writer.writeTimeHeader(totalTime);
+            for (Particle p : stars) {
+                if (p != null) {
+                    writer.writeLine(p.toFileString());
                 }
             }
+        } catch (IOException e) {
+            logger.error("Error al escribir en el archivo: {}", e.getMessage(), e);
         }
     }
 }

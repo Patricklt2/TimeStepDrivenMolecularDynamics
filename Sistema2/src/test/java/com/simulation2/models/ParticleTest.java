@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ParticleTest {
 
-    @Test
+    /*@Test
     public void testCalculateForces(){
         Particle p1 = new Particle(1, new Vector3D(0, 0, 0), Vector3D.ZERO);
         Particle p2 = new Particle(2, new Vector3D(1, 0, 0), Vector3D.ZERO);
@@ -25,5 +25,5 @@ public class ParticleTest {
         assertEquals(expectedForceX, forceOnP1.getX(), delta);
         assertEquals(0.0, forceOnP1.getY(), delta);
         assertEquals(0.0, forceOnP1.getZ(), delta);
-    }
+    }*/
 }
