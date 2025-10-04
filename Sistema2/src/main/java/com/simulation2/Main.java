@@ -24,7 +24,7 @@ public class Main {
         IIntegrator2 integrator = new VelocityVerlet2();
         double timeStep = 0.001;
         String filename = "sim_dt_" + timeStep + ".csv";
-        Simulation2 s = new Simulation2(2, 1, 5, timeStep, filename, integrator);
+        Simulation2 s = new Simulation2(2, 1, 1, timeStep, filename, integrator);
         s.addGalaxyToSimulation(Vector3D.ZERO, Vector3D.ZERO);
         s.run();
     }

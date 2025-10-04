@@ -23,8 +23,8 @@ public class Galaxy2 {
     public static Particle[] initializeStars(int galaxyId, int particleOffset, int numStars, Vector3D centerPosition, Vector3D initialGalaxyVelocity) {
         Particle[] stars = new Particle[numStars];
 
-        Particle p1 = new Particle(1, 1, new Vector3D(0, 0, 0), new Vector3D(0,0,0));
-        Particle p2 = new Particle(2, 1, new Vector3D(0.2, 0, 0), new Vector3D(0,0,0));
+        Particle p1 = new Particle(1, 1, new Vector3D(0, 0, 0), new Vector3D(0,-1,0));
+        Particle p2 = new Particle(2, 1, new Vector3D(0.2, 0, 0), new Vector3D(0,1,0));
 
         stars[0] = p1;
         stars[1] = p2;

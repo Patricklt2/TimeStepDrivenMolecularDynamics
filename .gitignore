@@ -26,6 +26,8 @@ hs_err_pid*
 replay_pid*
 
 Sistema2/python/data
+Sistema2/python/.DS_Store
+Sistema2/.DS_Store
 venv/
 __pycache__/
 .idea
