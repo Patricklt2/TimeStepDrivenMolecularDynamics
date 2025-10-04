@@ -93,6 +93,12 @@ public class Galaxy2 {
     public void initializeStars() {
         stars = new Particle[numberOfStars];
 
+        /*Particle p1 = new Particle(1, new Vector3D(0, 0, 0), new Vector3D(0,-1,0));
+        Particle p2 = new Particle(2, new Vector3D(0.2, 0, 0), new Vector3D(0,1,0));
+
+        stars[0] = p1;
+        stars[1] = p2;
+*/
         final double minDistance = 0.05;
         // Un radio "efectivo" para la galaxia, actúa como un multiplicador del desvío estándar.
         final double galaxyRadiusScale = 1.5;

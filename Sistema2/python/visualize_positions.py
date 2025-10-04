@@ -67,7 +67,7 @@ def main():
     # Construcción de la ruta al archivo de datos
     try:
         script_dir = os.path.dirname(os.path.abspath(__file__))
-        data_file_path = os.path.join(script_dir, "data", "sim.csv")
+        data_file_path = os.path.join(script_dir, "data", "sim_dt_0.001.csv")
     except NameError:
         # Fallback para cuando se ejecuta en un entorno interactivo
         data_file_path = "python/data/sim.csv"
