@@ -15,7 +15,7 @@ public class Simulation2 {
     private final int N; // número de partículas
     private final double maxTime;
     private final double timeStep;
-    private final double printingStep = 20.0;
+    private final double printingStep = 50.0;
 
     private final IIntegrator2 integrator;
     private final Galaxy2[] galaxies;
