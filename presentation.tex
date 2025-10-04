@@ -1,0 +1,120 @@
+\documentclass{beamer}
+\usepackage[dvipsnames]{xcolor}
+\usetheme{Hannover}
+\usecolortheme{spruce}
+
+\usepackage{graphicx}
+\usepackage{animate}
+
+% Datos
+\title{Time Step Driven Molecular Dynamics}
+\author{Grupo 5}
+\institute{ITBA}
+\date{} % sin fecha
+% Numerar diapositivas
+\setbeamertemplate{footline}[frame number]
+
+% ---- Colores de prueba (bien contrastantes) ----
+% Color base para bullets, numeración, títulos por defecto
+\setbeamercolor{structure}{fg=blue}
+
+% Sidebar: secciones
+\usebeamercolor{title in sidebar}
+\colorlet{SidebarTitleFG}{title in sidebar.fg}
+%\setbeamercolor{section in sidebar}{fg=white, bg=red}          % sección activa -
+\setbeamercolor{section in sidebar shaded}{fg=SidebarTitleFG!70!black} % secciones inactivas
+\setbeamercolor{title in sidebar}{fg=SidebarTitleFG!70!black}
+\setbeamercolor{author in sidebar}{fg=SidebarTitleFG!90!black}
+
+% Sidebar: subsecciones
+\usebeamercolor{subsection in sidebar}
+\colorlet{SidebarSubsectionFG}{subsection in sidebar.fg}
+\setbeamercolor{subsection in sidebar}{fg=white}           % subsección activa
+\setbeamercolor{subsection in sidebar shaded}{}    % subsecciones inactivas
+
+% Topbar (headline con palettes
+
+\begin{document}
+
+% Portada
+  \begin{frame}
+    \titlepage
+    \begin{center}
+      \small INTEGRANTES: MARTINA SCHVARTZ TALLONE, PATRICK LUCA TORLASCHI y SERGIO SMIRNOFF
+    \end{center}
+  \end{frame}
+
+%-------------------- Sistema 1 --------------------
+%
+% Para el sistema 1) Solo deben presentarse los resultados (no incluir introducción, ni ecuaciones de
+% integradores, ni implementación, ni animaciones, ni conclusiones) en la menor cantidad posible de
+% diapositivas y debe ubicarse antes de la presentación del sistema
+
+  \section{Oscilador Puntual Amortiguado}
+  \subsection{Solución Analítica}
+  \begin{frame}{Solución Analítica}
+
+  \end{frame}
+  \subsection{Análisis del Error}
+  \begin{frame}{Error Cuadrático vs. dt}
+
+  \end{frame}
+
+
+
+% ---------------- Sistema 2 ----------------
+  \section{Formación de Galaxias}
+
+  \subsection{Introducción}
+  \subsubsection{Sistema Real}
+  \begin{frame}{Sistema Real frame}
+    Texto sobre el sistema real.
+  \end{frame}
+
+  \subsubsection{Modelo Matemático}
+  \begin{frame}{Modelo Matemático}
+    Texto del modelo matemático.
+  \end{frame}
+
+  \subsection{Implementación}
+  \begin{frame}{Implementación}
+    Texto de implementación.
+  \end{frame}
+
+  \subsection{Simulaciones}
+  \subsubsection{Geometría del Sistema}
+  \begin{frame}{Geometría del Sistema}
+
+  \end{frame}
+  \subsubsection{Definición Observables}
+  \begin{frame}{Definición Observables}
+
+  \end{frame}
+
+  \subsection{Resultados}
+  \subsubsection{Conservación Energía}
+  \begin{frame}{Conservación Energía}
+
+  \end{frame}
+  \subsubsection{Radio de Masa Media}
+  \begin{frame}{Radio de Masa Media}
+
+  \end{frame}
+  \subsubsection{Colisión Cúmulos}
+  \begin{frame}{Colisión de Cúmulos}
+
+  \end{frame}
+
+  \subsection{Conclusiones}
+  \begin{frame}{Conclusiones}
+    Texto de conclusiones.
+  \end{frame}
+
+% Cierre
+  \begin{frame}{}
+    \centering
+    \Huge ¡Gracias por su atención!
+  \end{frame}
+
+\end{document}
+
