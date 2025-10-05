@@ -19,27 +19,30 @@ def parse_simulation_file(filepath):
     current_time = -1
     
     for line in lines:
-        parts = line.strip().split(';')
-        if len(parts) == 5:
+        line = line.strip()
+        if line.startswith('t='):
             try:
-                current_time = float(parts[0])
+                current_time = float(line.split('=')[1])
             except ValueError:
                 continue
-        elif len(parts) == 10:
-            try:
-                star_id, x, y, z, vx, vy, vz = [float(p) for p in parts[:7]]
-                time_data.append([
-                    current_time, int(star_id),
-                    x, y, z,
-                    vx, vy, vz
-                ])
-            except (ValueError, IndexError):
-                continue
+        else:
+            parts = line.split(';')
+
+            if len(parts) == 8:
+                try:
+                    star_id, galaxyId, x, y, z, vx, vy, vz = [float(p) for p in parts]
+                    time_data.append([
+                        current_time, int(star_id), int(galaxyId),
+                        x, y, z,
+                        vx, vy, vz
+                    ])
+                except (ValueError, IndexError):
+                    continue
                 
     if not time_data:
         return pd.DataFrame()
 
-    df = pd.DataFrame(time_data, columns=['time', 'id', 'x', 'y', 'z', 'vx', 'vy', 'vz'])
+    df = pd.DataFrame(time_data, columns=['time', 'id', 'galaxyId', 'x', 'y', 'z', 'vx', 'vy', 'vz'])
     return df
 
 def calculate_half_mass_radius(df_group):

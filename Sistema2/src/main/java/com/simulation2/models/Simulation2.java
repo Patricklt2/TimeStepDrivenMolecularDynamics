@@ -51,7 +51,7 @@ public class Simulation2 {
             logger.warn("Cannot add any more galaxies to the simulation.");
             return;
         }
-        Particle[] newStars = Galaxy2.initializeStars(starOffset / starsPerGalaxy, starOffset,  starsPerGalaxy, centerPosition, initialVelocity);
+        Particle[] newStars = Galaxy2.initializeStars(starOffset / starsPerGalaxy + 1, starOffset,  starsPerGalaxy, centerPosition, initialVelocity);
         System.arraycopy(newStars, 0, stars, starOffset, starsPerGalaxy);
         starOffset+=starsPerGalaxy;
     }
@@ -83,16 +83,13 @@ public class Simulation2 {
         writeToFile(); // Escribe el estado inicial (t=0)
 
         int stepCount = 0;
-        long stepsPerWrite = Math.round(printingStep / timeStep);
-        if (stepsPerWrite == 0) stepsPerWrite = 1;
 
         while (totalTime < maxTime) {
             integrator.step(stars, timeStep, G, h);
             totalTime += timeStep;
-            stepCount++;
-            //if (stepCount % stepsPerWrite == 0) {
+            if (stepCount++ % printingStep == 0) {
                 writeToFile();
-            //}
+            }
         }
 
         writeToFile();
@@ -112,5 +109,10 @@ public class Simulation2 {
         } catch (IOException e) {
             logger.error("Error al escribir en el archivo: {}", e.getMessage(), e);
         }
+    }
+
+    /** ---------- Getters y Setters ----------**/
+    public Particle[] getStars() {
+        return stars;
     }
 }
