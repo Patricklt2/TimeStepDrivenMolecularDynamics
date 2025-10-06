@@ -8,21 +8,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class GalaxyTest {
 
-    private Galaxy2 galaxy;
+
     private final String GALAXY_NAME = "galaxy";
     private final int NUM_STARS = 2;
     private final Vector3D CENTER_POSITION = new Vector3D(0, 0, 0);
 
-    @BeforeEach
-    public void setUp(){
-        galaxy = new Galaxy2(GALAXY_NAME, NUM_STARS, CENTER_POSITION);
-    }
-
     @Test
     public void testInitializeStars(){
-        galaxy.initializeStars();
+        Particle[] stars = Galaxy2.initializeStars(1, 0, NUM_STARS, Vector3D.ZERO, Vector3D.ZERO);
 
-        assertEquals(NUM_STARS, galaxy.getStars().length);
+        assertEquals(NUM_STARS, stars.length);
     }
 
 

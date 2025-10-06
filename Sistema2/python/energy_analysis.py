@@ -3,15 +3,17 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 from itertools import combinations
+from tqdm import tqdm
+from pathlib import Path
 
 # --- Constantes de la Simulación ---
 G = 1.0   # Constante de gravitación
 H = 0.05  # Parámetro de suavizado
 MASS = 1.0 # Masa unitaria de cada partícula
 
-def parse_simulation_output(filename="sim.csv"):
+def parse_simulation_output(filename):
     """
-    Procesa el archivo de salida CSV de la simulación.
+    Procesa el archivo de salida CSV con el nuevo formato (t=...).
     Retorna un diccionario que mapea el tiempo (float) a un DataFrame de partículas.
     """
     timesteps = {}
@@ -21,34 +23,41 @@ def parse_simulation_output(filename="sim.csv"):
     print(f"Leyendo el archivo de simulación: {filename}...")
 
     with open(filename, 'r') as f:
-        for line in f:
+        lines = f.readlines()
+
+    with tqdm(total=len(lines), desc="Procesando líneas") as pbar:
+        for line in lines:
             line = line.strip()
             if not line:
+                pbar.update(1)
                 continue
 
-            parts = line.split(';')
+            # --- CAMBIO CLAVE: Detectar header de tiempo ---
+            if line.startswith('t='):
+                if current_time is not None and particle_data:
+                    # El nuevo formato tiene 8 columnas: id, galaxyId, x, y, z, vx, vy, vz
+                    df = pd.DataFrame(particle_data,
+                                      columns=['id', 'galaxyId', 'x', 'y', 'z', 'vx', 'vy', 'vz'])
+                    df = df.apply(pd.to_numeric)
+                    timesteps[current_time] = df
 
-            # Encabezado de galaxia
-            if len(parts) == 5 and 'Galaxy' in parts[1]:
                 try:
-                    time_val = float(parts[0])
-                    if current_time is not None and particle_data:
-                        df = pd.DataFrame(particle_data,
-                                          columns=['id', 'x', 'y', 'z', 'vx', 'vy', 'vz', 'fx', 'fy', 'fz'])
-                        df = df.apply(pd.to_numeric)
-                        timesteps[current_time] = df
-                    current_time = time_val
+                    current_time = float(line.split('=')[1])
                     particle_data = []
                 except (ValueError, IndexError):
                     continue
-            # Línea de partícula
-            elif len(parts) == 10:
-                if current_time is not None:
-                    particle_data.append(parts)
+            # --- CAMBIO CLAVE: Leer línea de partícula ---
+            else:
+                parts = line.split(';')
+                if len(parts) >= 8: # Asegurarse de que la línea tiene suficientes datos
+                    if current_time is not None:
+                        particle_data.append(parts[:8])
+            pbar.update(1)
 
+    # Guarda el último bloque de datos
     if current_time is not None and particle_data:
         df = pd.DataFrame(particle_data,
-                          columns=['id', 'x', 'y', 'z', 'vx', 'vy', 'vz', 'fx', 'fy', 'fz'])
+                          columns=['id', 'galaxyId', 'x', 'y', 'z', 'vx', 'vy', 'vz'])
         df = df.apply(pd.to_numeric)
         timesteps[current_time] = df
 
@@ -58,7 +67,7 @@ def parse_simulation_output(filename="sim.csv"):
 def calculate_energies(particles_df):
     """
     Calcula Energía Cinética, Potencial y Total.
-    Retorna: (KE, PE, Total)
+    (Esta función no necesita cambios)
     """
     # Energía Cinética
     velocities_sq = particles_df[['vx', 'vy', 'vz']]**2
@@ -79,23 +88,19 @@ def calculate_energies(particles_df):
     return total_ke, total_pe, total_energy
 
 def main():
-    # Construcción de la ruta
-    try:
-        script_dir = os.path.dirname(os.path.abspath(__file__))
-        data_file_path = os.path.join(script_dir, "data", "sim.csv")
-    except NameError:
-        data_file_path = "python/data/sim.csv"
+    # --- CAMBIO CLAVE: Usar Pathlib para una ruta más robusta ---
+    # Asegúrate de que el nombre del archivo sea el correcto
+    data_file_path = Path(__file__).parent / "data" / "sim_dt_0.001.csv"
 
-    # Procesar archivo
     try:
-        print(f"Buscando archivo de datos en: {os.path.abspath(data_file_path)}")
+        print(f"Buscando archivo de datos en: {data_file_path.resolve()}")
         data_by_time = parse_simulation_output(data_file_path)
     except FileNotFoundError:
         print(f"Error: No se encontró el archivo en '{data_file_path}'.")
         return
 
     if not data_by_time:
-        print("No se procesaron datos. El archivo 'sim.csv' podría estar vacío o mal formateado.")
+        print("No se procesaron datos. El archivo podría estar vacío o mal formateado.")
         return
 
     # Calcular energías
@@ -104,13 +109,13 @@ def main():
     potential_energies = []
     total_energies = []
 
-    for t in times:
+    print("\nCalculando energías para cada paso de tiempo...")
+    for t in tqdm(times, desc="Calculando Energías"):
         particles = data_by_time[t]
         ke, pe, te = calculate_energies(particles)
         kinetic_energies.append(ke)
         potential_energies.append(pe)
         total_energies.append(te)
-        print(f"Tiempo: {t:.2f}, KE={ke:.4f}, PE={pe:.4f}, Total={te:.4f}")
 
     # Graficar
     plt.figure(figsize=(12, 8))
@@ -120,6 +125,7 @@ def main():
 
     plt.xlabel('Tiempo de Simulación (s)')
     plt.ylabel('Energía')
+    plt.title('Conservación de la Energía en la Simulación')
     plt.grid(True)
 
     if total_energies:
@@ -130,7 +136,7 @@ def main():
     plt.legend()
     plt.tight_layout()
 
-    output_filename = os.path.join(os.path.dirname(data_file_path), "energy_components_plot.png")
+    output_filename = data_file_path.parent / "energy_components_plot.png"
     plt.savefig(output_filename)
     print(f"\n¡Análisis completo! Gráfico guardado en: {output_filename}")
 

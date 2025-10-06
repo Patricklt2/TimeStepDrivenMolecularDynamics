@@ -6,7 +6,7 @@
 
 # BlueJ files
 *.ctxt
-
+#*.png
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 
@@ -28,6 +28,12 @@ replay_pid*
 .vscode/
 python/data
 
+Sistema2/python/data
+Sistema2/python/.DS_Store
+Sistema2/.DS_Store
 venv/
 __pycache__/
 .idea
+
+.vscode
+.claude

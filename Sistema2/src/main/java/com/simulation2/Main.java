@@ -7,6 +7,7 @@ import java.util.concurrent.TimeUnit;
 import com.simulation2.integrators.IIntegrator2;
 import com.simulation2.integrators.VelocityVerlet2;
 import com.simulation2.models.Simulation2;
+import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
 public class Main {
     public static void main(String[] args) {
@@ -15,15 +16,26 @@ public class Main {
 
     public static void defaultRun(){
         IIntegrator2 integrator = new VelocityVerlet2();
-        Simulation2 s = new Simulation2(100, 1, 100, 1, 0.001, "sim.csv", integrator);
+        Simulation2 s = new Simulation2(50, 1, 100, 0.001, "sim.csv", integrator);
         s.run();
     }
 
     public static void dtRun(){
         IIntegrator2 integrator = new VelocityVerlet2();
-        double timeStep = 0.0001;
+        double timeStep = 0.001;
         String filename = "sim_dt_" + timeStep + ".csv";
-        Simulation2 s = new Simulation2(2, 1, 100, 5, timeStep, filename, integrator);
+        Simulation2 s = new Simulation2(300, 1, 5, timeStep, filename, integrator);
+        s.addGalaxyToSimulation(Vector3D.ZERO, Vector3D.ZERO);
+        s.run();
+    }
+
+    public static void runFor4(){
+        IIntegrator2 integrator = new VelocityVerlet2();
+        double timeStep = 0.001;
+        String filename = "sim_dt_" + timeStep + ".csv";
+        Simulation2 s = new Simulation2(50, 2, 5, timeStep, filename, integrator);
+        s.addGalaxyToSimulation(new Vector3D(-2.0,-0.25,0.0), new Vector3D(0.1,0,0));
+        s.addGalaxyToSimulation(new Vector3D(2.0,0.25,0.0), new Vector3D(-0.1,0,0));
         s.run();
     }
 
@@ -40,8 +52,9 @@ public class Main {
                 final int currentJ = j;
 
                 Runnable simulationTask = () -> {
-                    Simulation2 s = new Simulation2(currentI, 1, 100, 60, 0.001,
+                    Simulation2 s = new Simulation2(currentI, 1, 60, 0.001,
                             String.format("sim_%d_%d.csv", currentI, currentJ), integrator);
+                    s.addGalaxyToSimulation(Vector3D.ZERO, Vector3D.ZERO);
                     s.run();
                 };
                 executor.submit(simulationTask);
