@@ -1,88 +1,101 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-import os
+from tqdm import tqdm
+from pathlib import Path
+import time
 from energy_analysis import calculate_energies, parse_simulation_output
 
-def energy_stddev_for_file(filename):
-    if not os.path.isfile(filename):
-        raise FileNotFoundError(f"El archivo {filename} no existe.")
 
+def energy_stddev_for_file(filename: Path) -> float | None:
+    """
+    Calcula la desviación estándar de la energía total para un archivo de simulación.
+    Muestra el progreso de cálculo por cada timestep.
+    """
+    if not filename.is_file():
+        tqdm.write(f"⚠️  Archivo no encontrado: {filename.name}")
+        return None
+
+    # --- Parse CSV ---
+    t0 = time.time()
     data_by_time = parse_simulation_output(filename)
+    if not data_by_time or not isinstance(data_by_time, dict):
+        tqdm.write(f"⚠️  Datos inválidos en {filename.name}")
+        return None
+    parse_time = time.time() - t0
 
-    times = sorted(data_by_time.keys())
+    # --- Compute energies ---
+    times = sorted(data_by_time)
     total_energies = []
 
-    for t in times:
+    for t in tqdm(
+            times,
+            desc=f"  → {filename.name:15} | Energías",
+            leave=False,
+            ncols=100,
+    ):
         particles = data_by_time[t]
         _, _, te = calculate_energies(particles)
         total_energies.append(te)
 
-    return np.std(total_energies)
+    stddev = float(np.std(total_energies))
+    total_time = time.time() - t0
+
+    tqdm.write(f"✅ {filename.name:20} | σ(E)={stddev:.6g} | t={total_time:.2f}s (parse={parse_time:.2f}s)")
+    return stddev
 
 
 def main():
-    """
-    Función principal que analiza múltiples archivos de simulación generados
-    con diferentes timeSteps y grafica la estabilidad de la energía.
-    """
-    # 1. Define los timeSteps que has simulado en Java
+    """Analiza múltiples archivos de simulación generados con diferentes timeSteps."""
     timesteps_to_analyze = [0.1, 0.01, 0.001, 0.0001]
-
-    # 2. Define la ruta a la carpeta donde están tus archivos de datos
-    try:
-        script_dir = os.path.dirname(os.path.abspath(__file__))
-        data_directory = os.path.join(script_dir, "data")
-    except NameError:
-        data_directory = "python/data"
-
+    data_directory = Path(__file__).parent / "data"
     results = {}
 
-    # 3. Itera sobre cada timeStep, construye el nombre del archivo y analiza
-    for dt in timesteps_to_analyze:
-        # El formato del nombre del archivo debe coincidir con cómo los guardaste
-        filename = os.path.join(data_directory, f"sim_dt_{dt}.csv")
+    print("🔍 Analizando la estabilidad de la energía...\n")
 
+    for dt in tqdm(
+            timesteps_to_analyze,
+            desc="Procesando archivos",
+            ncols=100,
+            colour="cyan",
+    ):
+        filename = data_directory / f"sim_dt_{dt}.csv"
         std_dev = energy_stddev_for_file(filename)
-
         if std_dev is not None:
             results[dt] = std_dev
 
     if not results:
-        print("No se pudo analizar ningún archivo. Asegúrate de que los archivos CSV existan")
-        print("en la carpeta 'data' y que los nombres coincidan (ej: 'sim_dt_0.01.csv').")
+        print("\n⚠️ No se pudo analizar ningún archivo. "
+              "Verifica que existan CSVs en la carpeta 'data'.")
         return
 
-    # 4. Prepara los datos para el gráfico
-    sorted_timesteps = sorted(results.keys())
-    sorted_std_devs = [results[dt] for dt in sorted_timesteps]
-
-    # 5. Crea el gráfico
+    # --- Plot ---
     plt.style.use('seaborn-v0_8-whitegrid')
     fig, ax = plt.subplots(figsize=(10, 6))
 
-    ax.plot(sorted_timesteps, sorted_std_devs, marker='o', linestyle='-', color='b')
+    sorted_items = sorted(results.items(), reverse=True)
+    dts = [str(k) for k, _ in sorted_items]  # treat dt as labels
+    stds = [v for _, v in sorted_items]
 
-    x_positions = np.arange(len(sorted_timesteps))
-    ax.plot(x_positions, sorted_std_devs, marker='o', linestyle='-', color='b')
+    ax.plot(dts, stds, marker='o', linestyle='-', color='b')
 
-    # Establecer las etiquetas del eje X para que muestren los valores de dt
-    ax.set_xticks(x_positions)
-    ax.set_xticklabels([str(dt) for dt in sorted_timesteps])
-
+    ax.invert_xaxis()
     ax.set_xlabel('Paso de Tiempo (dt) [s]')
     ax.set_ylabel('Desviación Estándar de la Energía Total')
-
     ax.grid(True, which="both", ls="--")
+    ax.minorticks_on()
 
-    print("\n--- Resumen de Resultados ---")
-    for dt, std in results.items():
-        print(f"dt = {dt:<8} -> Desv. Estándar = {std:.6f}")
+    # --- Summary ---
+    print("\n--- Resumen ---")
+    for dt, std in sorted(results.items(), reverse=True):
+        print(f"dt = {dt:<10} → σ(E) = {std:.6g}")
 
     plt.tight_layout()
+    output_filename = Path(__file__).parent / "optimal_time_analysis.png"
+    plt.savefig(output_filename, dpi=150)
+    print(f"\n📊 Gráfico guardado en: {output_filename}")
+
     plt.show()
-
-
 
 
 if __name__ == "__main__":
