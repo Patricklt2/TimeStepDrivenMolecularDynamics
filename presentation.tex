@@ -125,10 +125,9 @@
   \end{frame}
 
   \subsubsection{Modelo Matemático}
-  \begin{frame}{Ecuaciones}
+  \begin{frame}{Modelo Matemático}
     \begin{itemize}
       \item Fuerza de Gravedad: $ \mathbf{F}_{ij} = -G \frac{m_i m_j}{r_{ij}^2} \mathbf{e}_{ij} $
-      \item Siendo $ G = 6.693 \times 10^{-11} \frac{m^3}{kg \cdot s^2} $
     \end{itemize}
     \vspace{0.5cm}
     \begin{center}
@@ -137,6 +136,17 @@
   \end{frame}
 
   \subsection{Implementación}
+    \begin{frame}
+    \centering
+    \colorbox{green!20!gray!30}{%
+      \begin{minipage}{0.85\textwidth}
+        \centering
+        \vspace{0.5cm}
+        {\Large Implementación}
+        \vspace{0.5cm}
+      \end{minipage}
+    }
+  \end{frame}
   \begin{frame}{Implementación}
     \begin{columns}
       \column{0.5\textwidth}
@@ -155,6 +165,18 @@
   \end{frame}
 
   \subsection{Simulaciones}
+  \begin{frame}
+    \centering
+    \colorbox{green!20!gray!30}{%
+      \begin{minipage}{0.85\textwidth}
+        \centering
+        \vspace{0.5cm}
+        {\Large Simulaciones}
+        \vspace{0.5cm}
+      \end{minipage}
+    }
+  \end{frame}
+
   \subsubsection{Geometría del Sistema}
   \begin{frame}{Geometría del Sistema}
     % ver si agregar los tiempos
@@ -162,26 +184,27 @@
       \column{0.5\textwidth}
         {\normalsize Parámetros fijos: }
         \begin{itemize}
-          \item \textit{G} = 1 $\frac{m^3}{kg \cdot s^2}$
-          \item \textit{h} = 0.05 $\frac{m}{s}$
-          \item \textit{m} = 1 $kg$
-          \item $|\textit{v}| = 0.1 \frac{m}{s}$
+          \item \textit{G} = 1
+          \item \textit{h} = 0.05 
+          \item \textit{m} = 1
+          \item $\textit{N} \in [100, 2000]$
         \end{itemize}
-        {\normalsize Posiciones Random: }
+        {\normalsize Condiciones Iniciales: }
         \begin{itemize}
-          \item \textbf{r_i} = (x_i,y_i,z_i)
+          \item $ |\textit{v}| = 0.1 $
+          \item  \textbf{r_i} = (x_i,y_i,z_i) , Norm(0,1)
         \end{itemize}
       \column{0.5\textwidth}
-        {\normalsize Variables: }
+        {\normalsize Input: }
         \begin{itemize}
-          \item $\textit{N} \in [100, 2000]$
+           \item Integrador: Velocity Verlet
           \item $\Delta t \in [10^{-1}, 10^{-4}]$
         \end{itemize}
     \end{columns}
   \end{frame}
 
   \subsubsection{Definición Observables}
-  \begin{frame}{Definición Observables}
+  \begin{frame}{Energía}
     \begin{itemize}
       \item Energía Potencial: 
       \[E_{pot}(t) = -G \sum_{i<j} \frac{m_i m_j}{\sqrt{|r_{ij}(t)|^2+h^2}}\]
@@ -191,15 +214,10 @@
       
       \item Energía Total: 
       \[E_{tot}(t) = E_{kin}(t) + E_{pot}(t)\]
-      
-      \item Radio media masa: 
-      \[R_{rms} = \left( \frac{\sum_i m_i r_i^2}{\sum_i m_i} \right)^{1/2}\]
-      
-      \item $t^*$ tal que $r_{hm}(t^*-dt) \leq 1$ AND $r_{hm}(t^*+dt) > 1$
     \end{itemize}
   \end{frame}
 
-  \begin{frame}{Definición Observables}
+  \begin{frame}{Conservación de la energía}
     \begin{itemize}
       \item Error Relativo: 
       \[ \epsilon_{E}(t) = \frac{|E_{tot}(t) - E_{tot}(0)|}{|E_{tot}(0)|} \]
@@ -208,16 +226,45 @@
     \end{itemize}
   \end{frame}
 
+  \begin{frame}{Radio de Masa Media}
+    \begin{itemize}
+      \item Radio media masa: 
+      \[r_{hm} = mediana(|r_i(t)-r_{CM}(t)|) \] siendo: 
+      \[ r_{CM}(t) = \frac{1}{N} \sum_{i=1}^{N} r_i(t) \]
+      \item Promedio del radio de media masa:
+      \[ \langle r_{hm} \rangle = \frac{1}{M} \sum_{k=1}^{M} r_{hm}^{k}(t) \] M cantidad de simulaciones
+    \end{itemize}
+  \end{frame}
+
+  \begin{frame}{Tiempo de Cruce}
+    \begin{itemize}
+      \item Tiempo de cruce: 
+      $t^*$ tal que $r_{hm}(t^*-dt) \leq 1$ AND $r_{hm}(t^*+dt) > 1$
+      \item Promedio del tiempo de cruce:
+      \[ \langle t^* \rangle = \frac{1}{M} \sum_{k=1}^{M} t_{k}^{*}(t) \] M cantidad de simulaciones
+    \end{itemize}
+  \end{frame}
+
   \subsection{Resultados}
+  \begin{frame}
+    \centering
+    \colorbox{green!20!gray!30}{%
+      \begin{minipage}{0.85\textwidth}
+        \centering
+        \vspace{0.5cm}
+        {\Large Resultados}
+        \vspace{0.5cm}
+      \end{minipage}
+    }
+  \end{frame}
   \subsubsection{Elección del paso temporal}
   \begin{frame}{Estudio de la conservación de la energía: dt}
     \begin{columns}
       \column{0.3\textwidth}
       \includegraphics[width=0.8\textwidth]{material/collisions.jpg}
       \column{0.7\textwidth}
-        \includegraphics[width=0.5\textwidth]{material/errorEnergia_dt.jpeg}
+        \includegraphics[width=1\textwidth]{material/errorEnergia.png}
     \end{columns}
-    N = 100, Integrador = Velocity Verlet
   \end{frame}
 
   \subsubsection{Conservación Energía}
@@ -225,7 +272,6 @@
     \begin{center}
       \includegraphics[width=1\textwidth]{material/energia.jpeg}
     \end{center}
-    N = 100, Integrador = Velocity Verlet
   \end{frame}
 
   \subsubsection{Observable: Radio de Masa Media}
@@ -233,21 +279,18 @@
     \begin{center}
       \includegraphics[width=1\textwidth]{material/pendienteMediaMasa.jpeg}
     \end{center}
-    Integrador = Velocity Verlet , en estacionario
   \end{frame}
 
   \begin{frame}{Evolucion Temporal Radio Media Masa} % 2.2 / 2.3
     \begin{center}
       \includegraphics[width=1\textwidth]{material/evolTempRmm.jpeg}
     \end{center}
-    Integrador = Velocity Verlet
   \end{frame}
 
   \begin{frame}{Tiempo de cruce $\langle t^* \rangle$ vs N} % 2.2 / 2.3
     \begin{center}
       \includegraphics[width=1\textwidth]{material/t*vsN.jpeg}
     \end{center}
-    Integrador = Velocity Verlet
   \end{frame}
 
   \subsubsection{Colisión Cúmulos}
@@ -261,9 +304,20 @@
   \end{frame}
 
   \subsection{Conclusiones}
+  \begin{frame}
+    \centering
+    \colorbox{green!20!gray!30}{%
+      \begin{minipage}{0.85\textwidth}
+        \centering
+        \vspace{0.5cm}
+        {\Large Conclusiones}
+        \vspace{0.5cm}
+      \end{minipage}
+    }
+  \end{frame}
   \begin{frame}{Conclusiones}
     \begin{itemize}
-      \item Mayor dt implica mayor error.
+      \item Mayor dt implica mayor error. El dt elegido es $10^{-3}$.
       \item Conservación de energía se mantiene (revisar).
       \item Radio de masa media aumenta con el tiempo (revisar).
     \end{itemize}
