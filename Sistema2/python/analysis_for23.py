@@ -110,9 +110,11 @@ if __name__ == "__main__":
             if not np.isnan(t_star):
                 realizations_data[n]['t_stars'].append(t_star)
 
+    std_slopes = {}
+    mean_slopes = {}
     results = {}
-    slopes = {}
-    crossing_times = {}
+    std_crossing_times = {}
+    mean_crossing_times = {}
 
     for n in N_values:
         rhm_dfs = realizations_data[n]['rhm_dfs']
@@ -126,17 +128,26 @@ if __name__ == "__main__":
         mean_rhm = combined_rhm.groupby('time')['r_hm'].mean().reset_index()
         results[n] = mean_rhm
         
-        stationary_df = mean_rhm.iloc[len(mean_rhm) // 2:]
-        if len(stationary_df) > 1:
-            slope, _, _, _, _ = linregress(stationary_df['time'], stationary_df['r_hm'])
-            slopes[n] = slope
+        idnidual_slopes = []
+        for df_realization in rhm_dfs:
+            stationary_df = df_realization.iloc[len(df_realization) // 2:]
+            if len(stationary_df) > 1:
+                slope, _, _, _, _ = linregress(stationary_df['time'], stationary_df['r_hm'])
+                idnidual_slopes.append(slope)
+
+        if individual_slopes:
+            mean_slopes[n] = np.mean(individual_slopes)
+            std_slopes[n] = np.std(individual_slopes)
         else:
-            slopes[n] = np.nan
+            mean_slopes[n] = np.nan
+            std_slopes[n] = np.nan
             
         if t_stars:
-            crossing_times[n] = np.mean(t_stars)
+            mean_crossing_times[n] = np.mean(t_stars)
+            std_crossing_times[n] = np.std(t_stars)
         else:
-            crossing_times[n] = np.nan
+            mean_crossing_times[n] = np.nan
+            std_crossing_times[n] = np.nan
 
 
     plt.style.use('seaborn-v0_8-whitegrid')
@@ -145,22 +156,26 @@ if __name__ == "__main__":
     for n, df in results.items():
         plt.plot(df['time'], df['r_hm'], label=f'N = {n}')
     plt.axhline(1.0, color='red', linestyle='--', label='$r_{hm} = 1$')
-    plt.title('Evolución Temporal del Radio de Media Masa Promedio $<r_{hm}(t)>$')
     plt.xlabel('Tiempo (t)')
     plt.ylabel('Radio de Media Masa Promedio $<r_{hm}>$')
+    plt.xticks(fontsize=14)
+    plt.yticks(fontsize=14)
     plt.legend()
     plt.grid(True)
     plt.savefig('rhm_evolucion.png')
     plt.show()
 
     plt.figure(figsize=(10, 6))
-    if slopes:
-        n_vals = sorted(slopes.keys())
-        slope_vals = [slopes[n] for n in n_vals]
-        plt.plot(n_vals, slope_vals, 'o-', label='Pendiente estacionaria')
-    plt.title('Pendiente del Estado Estacionario vs. Número de Partículas (N)')
+    if mean_slopes:
+        n_vals = sorted(mean_slopes.keys())
+        slope_means = [mean_slopes[n] for n in n_vals]
+        slope_stds = [std_slopes.get(n, 0) for n in n_vals]
+        plt.errorbar(n_vals, slope_means, yerr=slope_stds, fmt='o-', color='blue', label='Pendiente de $<r_{hm}(t)>$')
+    
     plt.xlabel('Número de Partículas (N)')
     plt.ylabel('Pendiente de $<r_{hm}(t)>$')
+    plt.xticks(fontsize=14)
+    plt.yticks(fontsize=14)
     plt.grid(True)
     plt.legend()
     plt.savefig('pendiente_vs_N.png')
@@ -168,13 +183,17 @@ if __name__ == "__main__":
 
     plt.figure(figsize=(10, 6))
     if crossing_times:
-        n_cross_vals = [n for n, t in crossing_times.items() if not np.isnan(t)]
-        t_star_vals = [crossing_times[n] for n in n_cross_vals]
+        n_cross_vals = sorted([n for n, t in crossing_times.items() if not np.isnan(t)])
+        t_star_vals = [mean_crossing_times[n] for n in n_cross_vals]
+        t_star_stds = [std_crossing_times.get(n, 0) for n in n_cross_vals]
+        
         if n_cross_vals:
-            plt.plot(n_cross_vals, t_star_vals, 'o-', color='green', label='Tiempo de cruce promedio')
-    plt.title('Tiempo de Cruce Promedio $<t^*>$ vs. Número de Partículas (N)')
+            plt.errorbar(n_cross_vals, t_star_vals, yerr=t_star_stds, fmt='o-', color='green', label='Tiempo Promedio $<t^*>$')
+    
     plt.xlabel('Número de Partículas (N)')
     plt.ylabel('Tiempo Promedio $<t^*>$ ($r_{hm} > 1$)')
+    plt.xticks(fontsize=14)
+    plt.yticks(fontsize=14)
     plt.grid(True)
     plt.legend()
     plt.savefig('t_star_vs_N.png')
