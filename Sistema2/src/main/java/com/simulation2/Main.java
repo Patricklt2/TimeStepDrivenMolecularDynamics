@@ -52,7 +52,7 @@ public class Main {
                 final int currentJ = j;
 
                 Runnable simulationTask = () -> {
-                    Simulation2 s = new Simulation2(currentI, 1, 60, 0.001,
+                    Simulation2 s = new Simulation2(currentI, 1, 30, 0.001,
                             String.format("sim_%d_%d.csv", currentI, currentJ), integrator);
                     s.addGalaxyToSimulation(Vector3D.ZERO, Vector3D.ZERO);
                     s.run();
@@ -65,8 +65,8 @@ public class Main {
         executor.shutdown();
 
         try {
-            if (!executor.awaitTermination(60, TimeUnit.MINUTES)) {
-                System.err.println("Tasks did not complete in 60 minutes. Forcing shutdown.");
+            if (!executor.awaitTermination(120, TimeUnit.MINUTES)) {
+                System.err.println("Tasks did not complete in 120 minutes. Forcing shutdown.");
                 executor.shutdownNow();
             }
         } catch (InterruptedException e) {

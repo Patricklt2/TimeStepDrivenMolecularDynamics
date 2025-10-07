@@ -20,7 +20,7 @@ public class Galaxy2 {
      * Inicializa las estrellas según los requisitos del enunciado y les
      * suma a cada una la velocidad neta de la galaxia
      */
-    public static Particle[] initializeStars(int galaxyId, int starOffset, int numberOfStars, Vector3D centerPosition, Vector3D initialGalaxyVelocity) {
+    public static Particle[] initializeStarsNoSuperposition(int galaxyId, int starOffset, int numberOfStars, Vector3D centerPosition, Vector3D initialGalaxyVelocity) {
 
         Particle[] stars = new Particle[numberOfStars];
 
@@ -76,6 +76,28 @@ public class Galaxy2 {
 
         return stars;
     }
+
+    public static Particle[] initializeStars(int galaxyId, int starOffset, int numberOfStars, Vector3D centerPosition, Vector3D initialGalaxyVelocity) {
+
+    Particle[] stars = new Particle[numberOfStars];
+
+    for (int i = 0; i < numberOfStars; i++) {
+        // Posición aleatoria con distribución gaussiana centrada en centerPosition
+        double x = centerPosition.getX() + random.nextGaussian();
+        double y = centerPosition.getY() + random.nextGaussian();
+        double z = centerPosition.getZ() + random.nextGaussian();
+        Vector3D position = new Vector3D(x, y, z);
+
+        // Velocidad con dirección aleatoria y magnitud fija
+        Vector3D randomDirection = generateRandomUnitVector();
+        Vector3D velocity = randomDirection.scalarMultiply(INITIAL_STAR_VELOCITY_MAGNITUDE)
+                                          .add(initialGalaxyVelocity);
+
+        stars[i] = new Particle(i + starOffset, galaxyId, position, velocity);
+    }
+
+    return stars;
+}
 
     /**
      * Genera un vector unitario con dirección aleatoria y uniforme.
