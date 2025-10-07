@@ -4,16 +4,17 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
+
 import com.simulation2.integrators.IIntegrator2;
 import com.simulation2.integrators.VelocityVerlet2;
 import com.simulation2.models.Simulation2;
-import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
 public class Main {
     public static void main(String[] args) {
         runfor2();
     }
-
+    
     public static void defaultRun(){
         IIntegrator2 integrator = new VelocityVerlet2();
         Simulation2 s = new Simulation2(50, 1, 100, 0.001, "sim.csv", integrator);
@@ -55,7 +56,7 @@ public class Main {
                     Simulation2 s = new Simulation2(currentI, 1, 30, 0.001,
                             String.format("sim_%d_%d.csv", currentI, currentJ), integrator);
                     s.addGalaxyToSimulation(Vector3D.ZERO, Vector3D.ZERO);
-                    s.run();
+                    s.runLogScaling();
                 };
                 executor.submit(simulationTask);
             }

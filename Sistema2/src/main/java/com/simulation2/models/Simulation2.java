@@ -99,6 +99,30 @@ public class Simulation2 {
         logger.info("Simulación finalizada en t={}", totalTime);
     }
 
+    public void runLogScaling() {
+        logger.info("Iniciando simulación con {} partículas totales", stars.length);
+
+        final double LOG_TIME_FACTOR = 1.1;
+        double nextSaveTime = timeStep;
+
+        prepareSimulation();
+
+        writeToFile(); // Escribe el estado inicial (t=0)
+
+        while (totalTime < maxTime) {
+            integrator.step(stars, timeStep, G, h);
+            totalTime += timeStep;
+
+            if ( totalTime >= nextSaveTime) {
+                writeToFile();
+                nextSaveTime *= LOG_TIME_FACTOR;
+            }
+        }
+
+        writeToFile();
+        logger.info("Simulación finalizada en t={}", totalTime);
+    }
+
     private void writeToFile() {
         logger.debug("Escribiendo estado en t={} al archivo: {}", totalTime, filename);
         // Usamos try-with-resources para asegurar que el writer se cierre siempre
