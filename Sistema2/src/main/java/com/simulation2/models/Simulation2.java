@@ -13,7 +13,8 @@ public class Simulation2 {
     // Simulation Variables
     private final double maxTime;
     private final double timeStep;
-    private final double printingStep = 25.0;
+    private final double printingInterval = 0.5;
+    private final double printingStep;
     private final String filename;
     private static final Logger logger = LoggerFactory.getLogger(Simulation2.class);
     private double totalTime = 0;
@@ -41,6 +42,7 @@ public class Simulation2 {
         this.maxTime = maxTime;
         this.integrator = integrator;
         this.timeStep = timeStep;
+        this.printingStep = (int) (printingInterval / timeStep);
     }
 
     /**
@@ -87,8 +89,33 @@ public class Simulation2 {
         while (totalTime < maxTime) {
             integrator.step(stars, timeStep, G, h);
             totalTime += timeStep;
-            if (stepCount++ % printingStep == 0) {
+            stepCount++;
+            if (stepCount % printingStep == 0) {
                 writeToFile();
+            }
+        }
+
+        writeToFile();
+        logger.info("Simulación finalizada en t={}", totalTime);
+    }
+
+    public void runLogScaling() {
+        logger.info("Iniciando simulación con {} partículas totales", stars.length);
+
+        final double LOG_TIME_FACTOR = 1.1;
+        double nextSaveTime = timeStep;
+
+        prepareSimulation();
+
+        writeToFile(); // Escribe el estado inicial (t=0)
+
+        while (totalTime < maxTime) {
+            integrator.step(stars, timeStep, G, h);
+            totalTime += timeStep;
+
+            if ( totalTime >= nextSaveTime) {
+                writeToFile();
+                nextSaveTime *= LOG_TIME_FACTOR;
             }
         }
 

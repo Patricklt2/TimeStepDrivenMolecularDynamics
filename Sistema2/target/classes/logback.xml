@@ -17,13 +17,13 @@
     </appender>
     
     <!-- Logger específico para tu simulación -->
-    <logger name="com.simulacion" level="DEBUG"/>
+    <logger name="com.simulacion" level="INFO"/>
     
     <!-- Logger para Apache Commons Math (solo warnings y errores) -->
     <logger name="org.apache.commons.math3" level="WARN"/>
     
     <!-- Nivel de log por defecto -->
-    <root level="DEBUG">
+    <root level="INFO">
         <appender-ref ref="CONSOLE"/>
         <appender-ref ref="FILE"/>
     </root>
