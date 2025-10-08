@@ -62,7 +62,7 @@
         \vspace{0.5cm}
       \end{minipage}
     }
-  \end{frame} 
+  \end{frame}
 
   \subsection{Solución Analítica}
   \begin{frame}{Solución Analítica vs Numéricas}
@@ -81,7 +81,7 @@
 % ---------------- Sistema 2 ----------------
 
   \section{Formación de Galaxias}
-    \begin{frame}
+  \begin{frame}
     \centering
     \colorbox{green!20!gray!30}{%
       \begin{minipage}{0.85\textwidth}
@@ -108,19 +108,9 @@
   \end{frame}
 
   \subsubsection{Sistema Real}
-  \begin{frame}{Dinámica molecular dirigida por tiempo}
+  \begin{frame}{Sistema Real}
     \begin{columns}
-      \column{0.5\textwidth}
-        {\normalsize Características: }
-        \begin{itemize}
-          \item Sistema de N cuerpos
-          \item Interacción gravitacional
-          \item El universo es un hiperplano de 3 dimensiones
-        \end{itemize}
-      \column{0.5\textwidth}
-        \begin{center}  
-          \includegraphics[width=1.2\textwidth]{material/ani_2p_frame.png}
-        \end{center}
+      ?
     \end{columns}
   \end{frame}
 
@@ -136,7 +126,7 @@
   \end{frame}
 
   \subsection{Implementación}
-    \begin{frame}
+  \begin{frame}
     \centering
     \colorbox{green!20!gray!30}{%
       \begin{minipage}{0.85\textwidth}
@@ -150,17 +140,17 @@
   \begin{frame}{Implementación}
     \begin{columns}
       \column{0.5\textwidth}
-        {\normalsize Clases: }
-        \begin{itemize}
-          \item Particle
-          \item Galaxy
-          \item Simulation
-          \item Integrator
-        \end{itemize}
+      {\normalsize Clases: }
+      \begin{itemize}
+        \item Particle
+        \item Galaxy
+        \item Simulation
+        \item Integrator
+      \end{itemize}
       \column{0.5\textwidth}
-        \begin{center}  
-          \includegraphics[width=0.8\textwidth]{material/UML.jpg}
-        \end{center}
+      \begin{center}
+        \includegraphics[width=0.8\textwidth]{material/UML.jpg}
+      \end{center}
     \end{columns}
   \end{frame}
 
@@ -179,66 +169,62 @@
 
   \subsubsection{Geometría del Sistema}
   \begin{frame}{Geometría del Sistema}
-    % ver si agregar los tiempos
+      % ver si agregar los tiempos
     \begin{columns}
       \column{0.5\textwidth}
-        {\normalsize Parámetros fijos: }
-        \begin{itemize}
-          \item \textit{G} = 1
-          \item \textit{h} = 0.05 
-          \item \textit{m} = 1
-          \item $\textit{N} \in [100, 2000]$
-        \end{itemize}
-        {\normalsize Condiciones Iniciales: }
-        \begin{itemize}
-          \item $ |\textit{v}| = 0.1 $
-          \item  \textbf{r_i} = (x_i,y_i,z_i) , Norm(0,1)
-        \end{itemize}
+      {\normalsize Parámetros fijos: }
+      \begin{itemize}
+        \item \textit{G} = 1
+        \item \textit{h} = 0.05
+        \item \textit{m} = 1
+        \item $\textit{N} \in [100, 2000]$
+      \end{itemize}
+
       \column{0.5\textwidth}
-        {\normalsize Input: }
-        \begin{itemize}
-           \item Integrador: Velocity Verlet
-          \item $\Delta t \in [10^{-1}, 10^{-4}]$
-        \end{itemize}
+      {\normalsize Condiciones Iniciales: }
+      \begin{itemize}
+        \item $|\textit{v}| = 0.1$
+        \item $\mathbf{r_i} = (x_i, y_i, z_i), \text{ Norm}(0,1)$
+      \end{itemize}
     \end{columns}
   \end{frame}
 
   \subsubsection{Definición Observables}
   \begin{frame}{Energía}
     \begin{itemize}
-      \item Energía Potencial: 
+      \item Energía Potencial:
       \[E_{pot}(t) = -G \sum_{i<j} \frac{m_i m_j}{\sqrt{|r_{ij}(t)|^2+h^2}}\]
-      
-      \item Energía Cinética: 
+
+      \item Energía Cinética:
       \[E_{kin}(t) = \frac{1}{2} \sum_{i=1} m_i |v_i(t)|^2\]
-      
-      \item Energía Total: 
+
+      \item Energía Total:
       \[E_{tot}(t) = E_{kin}(t) + E_{pot}(t)\]
     \end{itemize}
   \end{frame}
 
   \begin{frame}{Conservación de la energía}
     \begin{itemize}
-      \item Error Relativo: 
+      \item Error Relativo:
       \[ \epsilon_{E}(t) = \frac{|E_{tot}(t) - E_{tot}(0)|}{|E_{tot}(0)|} \]
-      \item Error relativo promedio: 
+      \item Error relativo promedio:
       \[ \langle \epsilon_{E} \rangle = \frac{1}{t_{max}} \sum_{t=0}^{t_{max}} \epsilon_{E}(t) \]
     \end{itemize}
   \end{frame}
 
   \begin{frame}{Radio de Masa Media}
     \begin{itemize}
-      \item Radio media masa: 
-      \[r_{hm} = mediana(|r_i(t)-r_{CM}(t)|) \] siendo: 
+      \item Radio media masa:
+      \[r_{hm} = mediana(|r_i(t)-r_{CM}(t)|) \] siendo:
       \[ r_{CM}(t) = \frac{1}{N} \sum_{i=1}^{N} r_i(t) \]
       \item Promedio del radio de media masa:
-      \[ \langle r_{hm} \rangle = \frac{1}{M} \sum_{k=1}^{M} r_{hm}^{k}(t) \] M cantidad de simulaciones
+      \[ \langle r_{hm} \rangle = \frac{1}{M} \sum_{k=1}^{M} r_{hm}^{k}(t) \] donde M es la cantidad de simulaciones
     \end{itemize}
   \end{frame}
 
   \begin{frame}{Tiempo de Cruce}
     \begin{itemize}
-      \item Tiempo de cruce: 
+      \item Tiempo de cruce:
       $t^*$ tal que $r_{hm}(t^*-dt) \leq 1$ AND $r_{hm}(t^*+dt) > 1$
       \item Promedio del tiempo de cruce:
       \[ \langle t^* \rangle = \frac{1}{M} \sum_{k=1}^{M} t_{k}^{*}(t) \] M cantidad de simulaciones
@@ -259,16 +245,34 @@
   \end{frame}
   \subsubsection{Elección del paso temporal}
   \begin{frame}{Estudio de la conservación de la energía: dt}
+    \vspace{0.1cm}
+    {\normalsize
+    Se elige un paso temporal de $\Delta t = 0.001$ utilizando el integrador \textit{Velocity Verlet},
+      tras analizar el desvío de la energía en las simulaciones.}
+    \vspace{0.5cm}
     \begin{columns}
       \column{0.3\textwidth}
       \includegraphics[width=0.8\textwidth]{material/collisions.jpg}
       \column{0.7\textwidth}
-        \includegraphics[width=1\textwidth]{material/errorEnergia.png}
+      \includegraphics[width=1\textwidth]{material/errorEnergia.png}
     \end{columns}
   \end{frame}
 
+  % para valores:
+  %public static void dtRun(){
+  %  IIntegrator2 integrator = new VelocityVerlet2();
+  %  double timeStep = 0.001;
+  %  String filename = "sim_dt_" + timeStep + ".csv";
+  %  Simulation2 s = new Simulation2(100, 1, 5, timeStep, filename, integrator);
+  %  s.addGalaxyToSimulation(Vector3D.ZERO, Vector3D.ZERO);
+  %  s.run();
+  %}
   \subsubsection{Conservación Energía}
   \begin{frame}{Conservación Energía} % 2.1
+    \vspace{0.1cm}
+    {\normalsize
+    Se presenta el gráfico de la conservación de la energía según el $\Delta t$ elegido, para una simulación con $N=100$ partículas}
+    \vspace{0.1cm}
     \begin{center}
       \includegraphics[width=1\textwidth]{material/energia.jpeg}
     \end{center}
@@ -289,7 +293,7 @@
 
   \begin{frame}{Tiempo de cruce $\langle t^* \rangle$ vs N} % 2.2 / 2.3
     \begin{center}
-      \includegraphics[width=1\textwidth]{material/t*vsN.jpeg}
+      \includegraphics[width=1\textwidth]{material/t_asterisco_vsN.jpeg}
     \end{center}
   \end{frame}
 
@@ -300,7 +304,7 @@
       \includegraphics[width=1\textwidth]{material/ani_coll_5s_frame.png}
       \url{https://www.youtube.com/watch?v=Z3uF1rX1k6A}
     \end{center}
-    % ver si incluir otra
+      % ver si incluir otra
   \end{frame}
 
   \subsection{Conclusiones}

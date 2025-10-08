@@ -122,10 +122,10 @@ def main():
     plt.plot(times, total_energies, marker='o', linestyle='-', markersize=3, label='Energía Total')
     plt.plot(times, kinetic_energies, linestyle='--', label='Energía Cinética')
     plt.plot(times, potential_energies, linestyle='--', label='Energía Potencial')
-
-    plt.xlabel('Tiempo de Simulación (s)')
-    plt.ylabel('Energía')
-    plt.title('Conservación de la Energía en la Simulación')
+    plt.xticks(fontsize=13)
+    plt.yticks(fontsize=13)
+    plt.xlabel('Tiempo de Simulación (s)', fontsize=13)
+    plt.ylabel('Energía (J)', fontsize=13)
     plt.grid(True)
 
     if total_energies:

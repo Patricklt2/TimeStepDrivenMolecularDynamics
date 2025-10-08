@@ -64,13 +64,19 @@ def animate(timesteps, particle_data, output_filename='galaxy_animation.mp4'):
     fig = plt.figure(figsize=(10, 8))
     ax = fig.add_subplot(111, projection='3d')
 
+    x_limit = [-5, 5]
+    zy_limit = [-3, 3]
+
+    current_rangex = x_limit[1]
+    current_rangezy = zy_limit[1]
+
     all_positions = np.vstack([data[:, 1:4] for data in particle_data.values()])
     min_coords = all_positions.min(axis=0)
     max_coords = all_positions.max(axis=0)
 
-    ax.set_xlim([min_coords[0] - 1, max_coords[0] + 1])
-    ax.set_ylim([min_coords[1] - 1, max_coords[1] + 1])
-    ax.set_zlim([min_coords[2] - 1, max_coords[2] + 1])
+    ax.set_xlim(x_limit[0], x_limit[1])
+    ax.set_ylim(zy_limit[0], zy_limit[1])
+    ax.set_zlim(zy_limit[0], zy_limit[1])
 
     ax.set_xlabel('X')
     ax.set_ylabel('Y')
@@ -86,19 +92,24 @@ def animate(timesteps, particle_data, output_filename='galaxy_animation.mp4'):
     pbar = tqdm(total=len(timesteps), desc="Renderizando video", unit="frame")
 
     def update(frame):
-        # --- MEJORA: NO se usa ax.cla(). Mucho más rápido. ---
+        nonlocal current_rangex, current_rangezy
         time = timesteps[frame]
-        # El array ahora es [galaxy_id, x, y, z]
-        positions = particle_data[time]
 
-        # --- MEJORA: Asignar colores según el galaxyId ---
+        positions = particle_data[time]
+        if current_rangex <= 30:
+            current_rangex += 0.1
+        if current_rangezy <= 30:
+            current_rangezy += 0.1
+
+        ax.set_xlim(-current_rangex, current_rangex)
+        ax.set_ylim(-current_rangezy, current_rangezy)
+        ax.set_zlim(-current_rangezy, current_rangezy)
+
         particle_colors = [colors[int(gid) % len(colors)] for gid in positions[:, 0]]
 
-        # --- MEJORA: Actualizar solo los datos del scatter plot ---
         scatter._offsets3d = (positions[:, 1], positions[:, 2], positions[:, 3])
         scatter.set_color(particle_colors)
 
-        title.set_text(f'Simulación de Galaxias - Tiempo: {time:.3f}')
         pbar.update(1)
 
         return scatter, title

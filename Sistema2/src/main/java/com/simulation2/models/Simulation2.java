@@ -13,7 +13,7 @@ public class Simulation2 {
     // Simulation Variables
     private final double maxTime;
     private final double timeStep;
-    private final double printingStep = 50.0;
+    private final double printingStep = 25.0;
     private final String filename;
     private static final Logger logger = LoggerFactory.getLogger(Simulation2.class);
     private double totalTime = 0;

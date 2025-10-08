@@ -11,7 +11,7 @@ import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
 public class Main {
     public static void main(String[] args) {
-        runfor2();
+        dtRun();
     }
 
     public static void defaultRun(){
@@ -24,7 +24,7 @@ public class Main {
         IIntegrator2 integrator = new VelocityVerlet2();
         double timeStep = 0.001;
         String filename = "sim_dt_" + timeStep + ".csv";
-        Simulation2 s = new Simulation2(300, 1, 5, timeStep, filename, integrator);
+        Simulation2 s = new Simulation2(100, 1, 5, timeStep, filename, integrator);
         s.addGalaxyToSimulation(Vector3D.ZERO, Vector3D.ZERO);
         s.run();
     }
@@ -33,7 +33,7 @@ public class Main {
         IIntegrator2 integrator = new VelocityVerlet2();
         double timeStep = 0.001;
         String filename = "sim_dt_" + timeStep + ".csv";
-        Simulation2 s = new Simulation2(50, 2, 5, timeStep, filename, integrator);
+        Simulation2 s = new Simulation2(100, 2, 7.5, timeStep, filename, integrator);
         s.addGalaxyToSimulation(new Vector3D(-2.0,-0.25,0.0), new Vector3D(0.1,0,0));
         s.addGalaxyToSimulation(new Vector3D(2.0,0.25,0.0), new Vector3D(-0.1,0,0));
         s.run();
