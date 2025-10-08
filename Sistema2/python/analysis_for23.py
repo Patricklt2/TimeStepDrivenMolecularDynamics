@@ -192,28 +192,14 @@ if __name__ == "__main__":
     plt.figure(figsize=(10, 6))
     if mean_slopes:
         n_vals = sorted(mean_slopes.keys())
-        slope_means = np.array([mean_slopes[n] for n in n_vals])
+        slope_means = [mean_slopes[n] for n in n_vals]
         slope_stds = [slope_stds_from_individuals.get(n, 0) for n in n_vals]
-
-        if len(n_vals) > 1:
-            log_n = np.log(n_vals)
-            log_slope = np.log(slope_means)
-
-            k_slope, intercept_slope, _, _, _ = linregress(log_n, log_slope)
-            A_slope = np.exp(intercept_slope)
-            
-            n_fit_slope = np.linspace(min(n_vals), max(n_vals), 100)
-            slope_fit = A_slope * (n_fit_slope ** k_slope)
-            
-            plt.errorbar(n_vals, slope_means, yerr=slope_stds, fmt='o-', color='blue')
-            plt.plot(n_fit_slope, slope_fit, 'r--', label=f'Ajuste: m $\propto {A_slope:.2f} N^{{{k_slope:.2f}}}$')
-
+        plt.errorbar(n_vals, slope_means, yerr=slope_stds, fmt='o-', color='blue', label='Pendiente de $<r_{hm}(t)>$')
     
     plt.xlabel('Número de Partículas (N)', fontsize=13)
     plt.ylabel('Pendiente de $<r_{hm}(t)>$', fontsize=13)
     plt.xticks(fontsize=13)
     plt.yticks(fontsize=13)
-    plt.legend()
     plt.grid(True)
     plt.savefig('pendiente_vs_N.png')
     plt.show()
@@ -221,28 +207,16 @@ if __name__ == "__main__":
     plt.figure(figsize=(10, 6))
     if mean_crossing_times:
         n_cross_vals = sorted([n for n, t in mean_crossing_times.items() if not np.isnan(t)])
-        t_star_vals = np.array([mean_crossing_times[n] for n in n_cross_vals])
+        t_star_vals = [mean_crossing_times[n] for n in n_cross_vals]
         t_star_stds = [std_crossing_times.get(n, 0) for n in n_cross_vals]
         
-        if len(n_cross_vals) > 1:
-            log_n = np.log(n_cross_vals)
-            log_t_star = np.log(t_star_vals)
-            
-            k, intercept, r_value, p_value, std_err = linregress(log_n, log_t_star)
-            
-            A = np.exp(intercept)
-            n_fit = np.linspace(min(n_cross_vals), max(n_cross_vals), 100)
-            t_star_fit = A * (n_fit ** k)
-            
-            plt.errorbar(n_cross_vals, t_star_vals, yerr=t_star_stds, fmt='o-', color='green')
-            plt.plot(n_fit, t_star_fit, 'r--', label=f'Ajuste: $t^* \propto {A:.2f} N^{{{k:.2f}}}$')
-
+        if n_cross_vals:
+            plt.errorbar(n_cross_vals, t_star_vals, yerr=t_star_stds, fmt='o-', color='green', label='Tiempo Promedio $<t^*>$')
     
     plt.xlabel('Número de Partículas (N)', fontsize=13)
     plt.ylabel('Tiempo Promedio $<t^*>$ ($r_{hm} > 1$)', fontsize=13)
     plt.xticks(fontsize=13)
     plt.yticks(fontsize=13)
     plt.grid(True)
-    plt.legend()
     plt.savefig('t_star_vs_N.png')
     plt.show()
