@@ -201,7 +201,6 @@ if __name__ == "__main__":
     plt.xticks(fontsize=13)
     plt.yticks(fontsize=13)
     plt.grid(True)
-    plt.legend()
     plt.savefig('pendiente_vs_N.png')
     plt.show()
 
@@ -219,6 +218,5 @@ if __name__ == "__main__":
     plt.xticks(fontsize=13)
     plt.yticks(fontsize=13)
     plt.grid(True)
-    plt.legend()
     plt.savefig('t_star_vs_N.png')
     plt.show()
