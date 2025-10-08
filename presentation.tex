@@ -115,6 +115,7 @@
   \end{frame}
 
   \subsubsection{Modelo Matemático}
+  % No sabemos si el diagrama va acá PREGUNTAR
   \begin{frame}{Modelo Matemático}
     \begin{itemize}
       \item Fuerza de Gravedad: $ \mathbf{F}_{ij} = -G \frac{m_i m_j}{r_{ij}^2} \mathbf{e}_{ij} $
@@ -174,16 +175,16 @@
       \column{0.5\textwidth}
       {\normalsize Parámetros fijos: }
       \begin{itemize}
-        \item \textit{G} = 1
+        \item \textit{G} = 1 $N\frac{ m^2}{kg^2}$
         \item \textit{h} = 0.05
-        \item \textit{m} = 1
+        \item \textit{m} = 1 kg
         \item $\textit{N} \in [100, 2000]$
       \end{itemize}
 
       \column{0.5\textwidth}
       {\normalsize Condiciones Iniciales: }
       \begin{itemize}
-        \item $|\textit{v}| = 0.1$
+        \item $|\textit{v}| = 0.1 \frac{m}{s}$
         \item $\mathbf{r_i} = (x_i, y_i, z_i), \text{ Norm}(0,1)$
       \end{itemize}
     \end{columns}
@@ -248,7 +249,7 @@
     \vspace{0.1cm}
     {\normalsize
     Se elige un paso temporal de $\Delta t = 0.001$ utilizando el integrador \textit{Velocity Verlet},
-      tras analizar el desvío de la energía en las simulaciones.}
+      tras analizar el desvío de la energía en las simulaciones para $N=100$ partículas.}
     \vspace{0.5cm}
     \begin{columns}
       \column{0.3\textwidth}
@@ -271,7 +272,7 @@
   \begin{frame}{Conservación Energía} % 2.1
     \vspace{0.1cm}
     {\normalsize
-    Se presenta el gráfico de la conservación de la energía según el $\Delta t$ elegido, para una simulación con $N=100$ partículas}
+    Se presenta el gráfico de la conservación de la energía según el $\Delta t$ elegido.}
     \vspace{0.1cm}
     \begin{center}
       \includegraphics[width=1\textwidth]{material/energia.jpeg}
@@ -279,32 +280,36 @@
   \end{frame}
 
   \subsubsection{Observable: Radio de Masa Media}
-  \begin{frame}{Pendiente de $\langle r_{hm} \rangle$ vs N} % 2.2 / 2.3
+  \begin{frame}{Evolucion Temporal Radio Media Masa} % 2.2 / 2.3
     \begin{center}
-      \includegraphics[width=1\textwidth]{material/pendienteMediaMasa.jpeg}
+      \includegraphics[width=1\textwidth]{material/rhm_evolucion.png}
     \end{center}
   \end{frame}
 
-  \begin{frame}{Evolucion Temporal Radio Media Masa} % 2.2 / 2.3
+  \begin{frame}{Pendiente de $\langle r_{hm} \rangle$ vs N} % 2.2 / 2.3
     \begin{center}
-      \includegraphics[width=1\textwidth]{material/evolTempRmm.jpeg}
+      \includegraphics[width=1\textwidth]{material/pendiente_vs_N.png}
     \end{center}
   \end{frame}
 
   \begin{frame}{Tiempo de cruce $\langle t^* \rangle$ vs N} % 2.2 / 2.3
     \begin{center}
-      \includegraphics[width=1\textwidth]{material/t_asterisco_vsN.jpeg}
+      \includegraphics[width=1\textwidth]{material/t_star_vs_N.png}
     \end{center}
   \end{frame}
 
   \subsubsection{Colisión Cúmulos}
-  \begin{frame}{Colisión de Cúmulos} % 2.4
-    \begin{center}
-      \normalsize $ \textit{d}_x = 4, \textit{d}_y = 0.5, \textit{v}_x = 0.1 $ % preguntar, v deberia ser un escalar no vector
-      \includegraphics[width=1\textwidth]{material/ani_coll_5s_frame.png}
-      \url{https://www.youtube.com/watch?v=Z3uF1rX1k6A}
-    \end{center}
-      % ver si incluir otra
+  \begin{frame}{Colisión de Cúmulos}
+    \centering
+    {\normalsize
+      $\textit{d}_x = 4,\ \textit{d}_y = 0.5,\ \textit{v}_x = 0.1$}
+
+    \includegraphics[width=0.65\textwidth]{material/colision.png}
+
+    \vspace{0.1cm}
+
+    \scriptsize
+    \url{https://youtu.be/QXvaxUvXeog?si=PyhogT2vi7IakK2O}
   \end{frame}
 
   \subsection{Conclusiones}
@@ -321,9 +326,10 @@
   \end{frame}
   \begin{frame}{Conclusiones}
     \begin{itemize}
-      \item Mayor dt implica mayor error. El dt elegido es $10^{-3}$.
-      \item Conservación de energía se mantiene (revisar).
-      \item Radio de masa media aumenta con el tiempo (revisar).
+      \item A medida que $\Delta t$ incrementa, el desvío de la energía aumenta. El $\Delta t$ óptimo es el mayor valor para el cuál el desvío es mínimo.
+      \item La energía total del sistema se conserva.
+      \item Radio de masa media aumenta con el tiempo.
+      \item Los sistemas con mayor número de partículas son más estables, ya que se expanden más lentamente (tardan más en superar el límite marcado por $r_{hm}=1$).
     \end{itemize}
   \end{frame}
 
