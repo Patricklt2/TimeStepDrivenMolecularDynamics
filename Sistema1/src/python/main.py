@@ -58,4 +58,4 @@ def analyze_error_vs_dt():
 
 
 if __name__ == '__main__':
-    analyze_single_run()
+    analyze_error_vs_dt()
