@@ -107,18 +107,12 @@
     }
   \end{frame}
 
-  \subsubsection{Sistema Real}
-  \begin{frame}{Sistema Real}
-    \begin{columns}
-      ?
-    \end{columns}
-  \end{frame}
-
   \subsubsection{Modelo Matemático}
-  % No sabemos si el diagrama va acá PREGUNTAR
-  \begin{frame}{Modelo Matemático}
+  \begin{frame}{Sistema Gravitatorio}
     \begin{itemize}
-      \item Fuerza de Gravedad: $ \mathbf{F}_{ij} = -G \frac{m_i m_j}{r_{ij}^2} \mathbf{e}_{ij} $
+      \item Fuerza de Gravedad: 
+      \[ \mathbf{F}_{ij} = -G \frac{\textit{m}_i \textit{m}_j \mathbf{r}_{ij}}{[|\mathbf{r}_{ij}|^2 + \textit{h}^2]^{\frac {3}{2}}} \] siendo
+      $ \mathbf{r}_{ij} = \mathbf{r}_i - \mathbf{r}_j $
     \end{itemize}
     \vspace{0.5cm}
     \begin{center}
@@ -172,21 +166,24 @@
   \begin{frame}{Geometría del Sistema}
       % ver si agregar los tiempos
     \begin{columns}
-      \column{0.5\textwidth}
+      \column{0.4\textwidth}
       {\normalsize Parámetros fijos: }
       \begin{itemize}
-        \item \textit{G} = 1 $N\frac{ m^2}{kg^2}$
+        \item \textit{G} = 1
         \item \textit{h} = 0.05
-        \item \textit{m} = 1 kg
+        \item \textit{m} = 1
+      \end{itemize}
+      {\normalsize Parametros variables: }
+      \begin{itemize}
         \item $\textit{N} \in [100, 2000]$
       \end{itemize}
-
-      \column{0.5\textwidth}
       {\normalsize Condiciones Iniciales: }
       \begin{itemize}
-        \item $|\textit{v}| = 0.1 \frac{m}{s}$
+        \item $|\textit{v}| = 0.1$
         \item $\mathbf{r_i} = (x_i, y_i, z_i), \text{ Norm}(0,1)$
       \end{itemize}
+      \column{0.6\textwidth}
+        \includegraphics[width=1\textwidth]{material/ani_2p_frame.png}
     \end{columns}
   \end{frame}
 
@@ -246,28 +243,15 @@
   \end{frame}
   \subsubsection{Elección del paso temporal}
   \begin{frame}{Estudio de la conservación de la energía: dt}
-    \vspace{0.1cm}
-    {\normalsize
-    Se elige un paso temporal de $\Delta t = 0.001$ utilizando el integrador \textit{Velocity Verlet},
-      tras analizar el desvío de la energía en las simulaciones para $N=100$ partículas.}
-    \vspace{0.5cm}
     \begin{columns}
-      \column{0.3\textwidth}
-      \includegraphics[width=0.8\textwidth]{material/collisions.jpg}
-      \column{0.7\textwidth}
-      \includegraphics[width=1\textwidth]{material/errorEnergia.png}
+      \column{0.2\textwidth}
+        \includegraphics[width=1\textwidth]{material/collisions.jpg}
+      \column{0.8\textwidth}
+        \includegraphics[width=1\textwidth]{material/errorEnergia.png}
+        {\tiny $\Delta t $ elegido: 0.001, integrador \textit{Velocity Verlet},$N=100$ }
     \end{columns}
   \end{frame}
 
-  % para valores:
-  %public static void dtRun(){
-  %  IIntegrator2 integrator = new VelocityVerlet2();
-  %  double timeStep = 0.001;
-  %  String filename = "sim_dt_" + timeStep + ".csv";
-  %  Simulation2 s = new Simulation2(100, 1, 5, timeStep, filename, integrator);
-  %  s.addGalaxyToSimulation(Vector3D.ZERO, Vector3D.ZERO);
-  %  s.run();
-  %}
   \subsubsection{Conservación Energía}
   \begin{frame}{Conservación Energía} % 2.1
     \vspace{0.1cm}
@@ -303,11 +287,8 @@
     \centering
     {\normalsize
       $\textit{d}_x = 4,\ \textit{d}_y = 0.5,\ \textit{v}_x = 0.1$}
-
     \includegraphics[width=0.65\textwidth]{material/colision.png}
-
     \vspace{0.1cm}
-
     \scriptsize
     \url{https://youtu.be/QXvaxUvXeog?si=PyhogT2vi7IakK2O}
   \end{frame}
